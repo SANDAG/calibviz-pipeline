@@ -41,3 +41,33 @@ Runtime Error
 [0m17:02:23.543709 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001F2D3814770>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001F2D36B3770>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001F2D366D480>]}
 [0m17:02:23.544193 [debug] [MainThread]: Flushing usage events
 [0m17:02:24.207356 [debug] [MainThread]: An error was encountered while trying to flush usage events
+[0m11:04:38.232096 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000024C7A398C20>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000024C7B4A3ED0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000024C7B4A3C50>]}
+
+
+============================== 11:04:38.241228 | 74c48020-16d3-487c-aed0-80c54ca409d4 ==============================
+[0m11:04:38.241228 [info ] [MainThread]: Running with dbt=1.10.13
+[0m11:04:38.242319 [debug] [MainThread]: running dbt with arguments {'partial_parse': 'True', 'profiles_dir': 'C:\\Users\\kng\\.dbt', 'send_anonymous_usage_stats': 'True', 'use_colors': 'True', 'cache_selected_only': 'False', 'target_path': 'None', 'warn_error': 'None', 'invocation_command': 'dbt run', 'log_format': 'default', 'version_check': 'True', 'introspect': 'True', 'debug': 'False', 'printer_width': '80', 'fail_fast': 'False', 'no_print': 'None', 'quiet': 'False', 'use_experimental_parser': 'False', 'empty': 'False', 'log_cache_events': 'False', 'indirect_selection': 'eager', 'log_path': 'logs', 'write_json': 'True', 'static_parser': 'True', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])'}
+[0m11:04:38.242808 [error] [MainThread]: Encountered an error:
+Runtime Error
+  No dbt_project.yml found at expected path C:\Users\kng\Documents\GitHub\calibviz-pipeline\dbt_project.yml
+  Verify that each entry within packages.yml (and their transitive dependencies) contains a file named dbt_project.yml
+  
+[0m11:04:38.243915 [debug] [MainThread]: Command `dbt run` failed at 11:04:38.243780 after 0.29 seconds
+[0m11:04:38.244327 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000024C7B4F83E0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000024C7B508050>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000024C7B359040>]}
+[0m11:04:38.244680 [debug] [MainThread]: Flushing usage events
+[0m11:04:39.015012 [debug] [MainThread]: An error was encountered while trying to flush usage events
+[0m11:04:50.775004 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001A8C0258C20>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001A8C1363ED0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001A8C1363C50>]}
+
+
+============================== 11:04:50.781215 | d5ed5e6e-709c-493e-b82b-caaa7547f1d2 ==============================
+[0m11:04:50.781215 [info ] [MainThread]: Running with dbt=1.10.13
+[0m11:04:50.782022 [debug] [MainThread]: running dbt with arguments {'partial_parse': 'True', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'send_anonymous_usage_stats': 'True', 'use_colors': 'True', 'cache_selected_only': 'False', 'target_path': 'None', 'warn_error': 'None', 'invocation_command': 'dbt build', 'log_format': 'default', 'version_check': 'True', 'introspect': 'True', 'debug': 'False', 'printer_width': '80', 'fail_fast': 'False', 'no_print': 'None', 'empty': 'False', 'use_experimental_parser': 'False', 'quiet': 'False', 'log_cache_events': 'False', 'indirect_selection': 'eager', 'log_path': 'logs', 'profiles_dir': 'C:\\Users\\kng\\.dbt', 'static_parser': 'True', 'write_json': 'True'}
+[0m11:04:50.782565 [error] [MainThread]: Encountered an error:
+Runtime Error
+  No dbt_project.yml found at expected path C:\Users\kng\Documents\GitHub\calibviz-pipeline\dbt_project.yml
+  Verify that each entry within packages.yml (and their transitive dependencies) contains a file named dbt_project.yml
+  
+[0m11:04:50.783696 [debug] [MainThread]: Command `dbt build` failed at 11:04:50.783559 after 0.19 seconds
+[0m11:04:50.784036 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001A8C13BC3E0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001A8C13CC050>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001A8C1219040>]}
+[0m11:04:50.784376 [debug] [MainThread]: Flushing usage events
+[0m11:04:51.373473 [debug] [MainThread]: An error was encountered while trying to flush usage events

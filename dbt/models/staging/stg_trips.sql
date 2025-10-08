@@ -1,7 +1,6 @@
-with source as (
-    select * from {{ source('staging', 'test_trips') }}
-)
+{{config(
+    materialized='view',
+    tags=['staging']
+)}}
 
-select
-    *
-from source
+SELECT * FROM {{ source('external_source', 'final_trips')}}
