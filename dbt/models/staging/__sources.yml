@@ -1,0 +1,6 @@
+sources:
+  - name: staging
+    schema: main  # Replace with your schema name
+    tables:
+      - name: test_persons
+      - name: test_trips
