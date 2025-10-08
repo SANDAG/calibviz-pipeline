@@ -1,6 +1,18 @@
 sources:
-  - name: staging
-    schema: main  # Replace with your schema name
+  # - name: staging
+  #   tables:
+  #     - name: stg_trips
+  #       meta:
+  #         : "T:/STORAGE-63T/2025RP_draft/abm_runs_v2/2022_S0_v2/output/resident/final_trips.csv"
+  #     - name: stg_households
+  #       meta:
+  #         file_path: "T:/STORAGE-63T/2025RP_draft/abm_runs_v2/2022_S0_v2/output/resident/final_households.csv"
+  - name: external_source
+    meta:
+      external_location: 'T:/STORAGE-63T/2025RP_draft/abm_runs_v2/2022_S0_v2/output/resident/{name}.csv'
     tables:
-      - name: test_persons
-      - name: test_trips
+      - name: final_trips
+      - name: final_households
+  - name: hts
+    meta:
+      external_location: 'T:/STORAGE-63T/2025RP_draft/hts_data/{name}.csv'
