@@ -14,7 +14,7 @@ hts_source as (
     select 
         hhsize, 
         FREQ * 100.0 / sum(FREQ) over () as percentage 
-    FROM {{ source('hts', 'hhSizeDist') }}
+    FROM {{ ref('stg_hhsizeDist') }}
 ),
 
 hts_households_joined as (
