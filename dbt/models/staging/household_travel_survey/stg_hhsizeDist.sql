@@ -1,9 +1,3 @@
-{{ config(
-    materialized='table',
-    tags=['staging']
-)}}
-
-
 with source as (SELECT * FROM {{ source('hts', 'hhSizeDist') }})
 
 SELECT 
