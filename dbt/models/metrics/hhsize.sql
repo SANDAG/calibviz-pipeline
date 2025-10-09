@@ -1,8 +1,3 @@
-{{ config(
-    materialized='table',
-    tags=['staging']
-)}}
-
 -- Calculate household size distribution as a percentage of total households
 -- Exclude group quarters (e.g., large institutions, dorms) from source staging (where unittype = 0)
 -- Cap household sizes at 5+ for comparison with survey data
