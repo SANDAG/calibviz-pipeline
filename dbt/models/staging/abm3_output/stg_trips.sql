@@ -3,4 +3,7 @@
     tags=['staging']
 )}}
 
-SELECT * FROM {{ source('external_source', 'final_trips')}}
+
+with source as (SELECT * FROM {{ source('abm3_resident_output', 'final_trips') }})
+
+SELECT * FROM source

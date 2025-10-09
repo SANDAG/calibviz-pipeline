@@ -1,13 +1,5 @@
 sources:
-  # - name: staging
-  #   tables:
-  #     - name: stg_trips
-  #       meta:
-  #         : "T:/STORAGE-63T/2025RP_draft/abm_runs_v2/2022_S0_v2/output/resident/final_trips.csv"
-  #     - name: stg_households
-  #       meta:
-  #         file_path: "T:/STORAGE-63T/2025RP_draft/abm_runs_v2/2022_S0_v2/output/resident/final_households.csv"
-  - name: external_source
+  - name: abm3_resident_output
     meta:
       external_location: 'T:/STORAGE-63T/2025RP_draft/abm_runs_v2/2022_S0_v2/output/resident/{name}.csv'
     tables:
@@ -15,6 +7,6 @@ sources:
       - name: final_households
   - name: hts
     meta:
-      external_location: 'T:/STORAGE-63T/2025RP_draft/abm_runs_v2/\2022_S0_v2/src/asim/visualizer/visualizer/hts_2022/{name}.csv'
+      external_location: 'T:/STORAGE-63T/2025RP_draft/abm_runs_v2/2022_S0_v2/src/asim/visualizer/visualizer/hts_2022/{name}.csv'
     tables:
       - name: hhSizeDist
