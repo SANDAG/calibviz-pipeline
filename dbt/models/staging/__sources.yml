@@ -5,6 +5,7 @@ sources:
     tables:
       - name: final_trips
       - name: final_households
+      - name: final_persons
   - name: hts
     meta:
       external_location: 'T:/STORAGE-63T/2025RP_draft/abm_runs_v2/2022_S0_v2/src/asim/visualizer/visualizer/hts_2022/{name}.csv'
