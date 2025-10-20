@@ -20,7 +20,7 @@ hts_source as (
 hts_households_joined as (
     select 
         s.hhsize, 
-        s.percentage as stg_percentage, 
+        s.percentage as abm_percentage, 
         h.percentage as hts_percentage
     from source s
     join hts_source h on s.hhsize = h.hhsize
