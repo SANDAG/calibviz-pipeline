@@ -15,7 +15,7 @@ display_connection_status()
 
 conn = get_db_connection()
 
-df = conn.execute("SELECT * FROM main.auto_ownership").fetch_df()
+df = conn.execute("SELECT auto_ownership, abm_percentage, hts_percentage FROM main.auto_ownership").fetch_df()
 
 st.dataframe(df)
 st.bar_chart(df, x='auto_ownership', y=['abm_percentage', 'hts_percentage'], stack=False)
