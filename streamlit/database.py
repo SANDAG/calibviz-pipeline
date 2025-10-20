@@ -48,7 +48,7 @@ def query_household_size(_conn: duckdb.DuckDBPyConnection) -> Tuple[Optional[pd.
     
     try:
         start = time.time()
-        query = "SELECT hhsize, stg_percentage, hts_percentage FROM main.hhsize"
+        query = "SELECT hhsize, abm_percentage, hts_percentage FROM main.hhsize"
         result = _conn.execute(query).fetch_df()
         elapsed = time.time() - start
         return result
