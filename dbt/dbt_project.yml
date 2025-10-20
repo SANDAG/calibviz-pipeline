@@ -33,7 +33,14 @@ models:
   calibviz_pipeline:
     # Config indicated by + and applies to all files under models/example/
     staging:
-      +materialized: view
+      +materialized: table
       +tags: ['staging']
     metrics:
-      +materialized: table
+      +materialized: view
+      +tags: ['metrics']
+
+vars:
+  scenarios: 
+  - "2022_S0_v2"
+  - "2026_S1"
+  base_path: "T:/STORAGE-63T/2025RP_draft/abm_runs_v2/"
