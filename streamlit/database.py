@@ -23,7 +23,7 @@ def get_db_connection() -> Tuple[Optional[duckdb.DuckDBPyConnection], float]:
     """
     try:
         start = time.time()
-        conn = duckdb.connect('../files.duckdb', read_only=True)
+        conn = duckdb.connect('../resident_calibration.duckdb', read_only=True)
         elapsed = time.time() - start
         return conn
     except Exception as e:
@@ -177,7 +177,7 @@ def display_connection_status():
             #st.caption(f"Connection: {conn_time:.3f}s")
             
             # Display database path
-            st.caption("**Path:** `../files.duckdb`")
+            st.caption("**Path:** `../resident_calibration.duckdb`")
             
             # Add refresh button
             if st.button("🔄 Refresh Data", use_container_width=True):
