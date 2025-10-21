@@ -43,7 +43,7 @@ uv sync
 cd dbt
 
 # Initialize dbt project
-dbt init
+dbt init --profiles-dir .
 ```
 
 When prompted:
@@ -51,10 +51,13 @@ When prompted:
 
 ### 3. Configure Database Connection
 
-Edit `profiles.yml` to specify the database path (in C:\Users\username\\.dbt):
+Edit `profiles.yml` in dbt folder.
+Change the dev targets:
 ```yaml
-path: ../files.duckdb
-threads: 4  # Increase thread count for better performance
+    dev:
+      type: duckdb
+      path: ../resident_calibration.duckdb
+      threads: 20 # Increase thread count for better performance 
 ```
 
 ### 4. Build dbt Models
@@ -77,8 +80,6 @@ dbt build
 # Navigate to streamlit directory
 cd ../streamlit
 
-# Edit app.py to set the correct database path
-# Update the database connection to: ../dev.duckdb
 ```
 
 ### 2. Launch Application
@@ -117,6 +118,6 @@ project/
 ├── streamlit/
 │   ├── app.py
 │   └── pages/
-├── files.duckdb
+├── resident_calibration.duckdb
 └── .venv/
 ```
