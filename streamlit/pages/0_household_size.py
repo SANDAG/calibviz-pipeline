@@ -8,9 +8,9 @@ from database import (
     display_connection_status
 )
 
-st.set_page_config(page_title="Vehicle Ownership Distribution", layout="wide")
+st.set_page_config(page_title="Household Size Distribution", layout="wide")
 
-st.title("Vehicle Ownership")
+st.title("Household Size Distribution")
 
 
 display_connection_status()
@@ -18,7 +18,7 @@ display_connection_status()
 # Query and display data
 conn = get_db_connection()
 
-df = conn.execute("SELECT auto_ownership, abm_percentage, hts_percentage FROM main.auto_ownership").fetch_df()
+df = conn.execute("SELECT hhsize, abm_percentage, hts_percentage FROM main.hhsize").fetch_df()
 
 
 # Display data
@@ -29,4 +29,4 @@ st.divider()
 
 # Display chart
 st.subheader("📈 Distribution Comparison")
-st.bar_chart(df, x='auto_ownership', y=['abm_percentage', 'hts_percentage'], stack=False)
+st.bar_chart(df, x='hhsize', y=['abm_percentage', 'hts_percentage'], stack=False)

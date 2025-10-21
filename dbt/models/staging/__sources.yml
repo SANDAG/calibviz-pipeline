@@ -12,3 +12,4 @@ sources:
     tables:
       - name: hhSizeDist
       - name: autoOwnership
+      - name: tripModeProfile_vis
