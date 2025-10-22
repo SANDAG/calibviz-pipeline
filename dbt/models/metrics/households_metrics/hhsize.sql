@@ -1,29 +1,46 @@
--- Calculate household size distribution as a percentage of total households
+-- Calculate household size distribution as a share of total households
 -- Exclude group quarters (e.g., large institutions, dorms) from source staging (where unittype = 0)
 -- Cap household sizes at 5+ for comparison with survey data
 
-with source as (
+with abm3_hhsize_capped as (
     select 
-        hhsize_capped as hhsize, 
-        count(*) * 100.0 / sum(count(*)) over () as percentage 
+        case 
+            when hhsize > 5 then 5 
+            else hhsize 
+        end as hhsize,
+        count(*) as household_count
     from {{ ref('stg_households') }} 
-    group by hhsize_capped
+    where unittype = 0 -- exclude group quarters
+    group by 
+        case 
+            when hhsize > 5 then 5 
+            else hhsize 
+        end
+),
+
+abm3_source as (
+    select 
+        hhsize,
+        household_count,
+        household_count * 1.0 / sum(household_count) over () as proportion
+    from abm3_hhsize_capped
 ),
 
 hts_source as (
     select 
         hhsize, 
-        FREQ * 100.0 / sum(FREQ) over () as percentage 
-    FROM {{ ref('stg_hhsizeDist') }}
+        FREQ * 1.0 / sum(FREQ) over () as proportion 
+    from {{ ref('stg_hhsizeDist') }}
 ),
 
-hts_households_joined as (
+hts_abm3_joined as (
     select 
-        s.hhsize, 
-        s.percentage as abm_percentage, 
-        h.percentage as hts_percentage
-    from source s
-    join hts_source h on s.hhsize = h.hhsize
+        a.hhsize, 
+        a.proportion as abm_proportion, 
+        h.proportion as hts_proportion
+    from abm3_source a
+    join hts_source h on a.hhsize = h.hhsize
 )
 
-select * from hts_households_joined
+select * from hts_abm3_joined
+order by hhsize
