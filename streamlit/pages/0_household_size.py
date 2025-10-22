@@ -33,19 +33,54 @@ st.dataframe(
     column_config={
         "abm_percentage": st.column_config.NumberColumn(
             "ABM Percentage",
-            format="%.2f%%"
+            format="%.1f%%"
         ),
         "hts_percentage": st.column_config.NumberColumn(
             "HTS Percentage",
-            format="%.2f%%"
+            format="%.1f%%"
         )
     },
-    use_container_width=True
+   width=800
 )
 
 
 st.divider()
 
 # Display chart
+# st.subheader("📈 Distribution Comparison")
+# st.bar_chart(df_display, x='hhsize', y=['abm_percentage', 'hts_percentage'], stack=False)
+import plotly.graph_objects as go
+
+# Display chart
 st.subheader("📈 Distribution Comparison")
-st.bar_chart(df_display, x='hhsize', y=['abm_percentage', 'hts_percentage'], stack=False)
+
+fig = go.Figure()
+
+# Add ABM bars
+fig.add_trace(go.Bar(
+    name='ABM',
+    x=df_display['hhsize'],
+    y=df_display['abm_percentage'],
+    hovertemplate='Household Size: %{x}<br>ABM: %{y:.1f}%<extra></extra>'
+))
+
+# Add HTS bars
+fig.add_trace(go.Bar(
+    name='HTS',
+    x=df_display['hhsize'],
+    y=df_display['hts_percentage'],
+    hovertemplate='Household Size: %{x}<br>HTS: %{y:.1f}%<extra></extra>'
+))
+
+fig.update_layout(
+    barmode='group',
+    xaxis_title='Household Size',
+    yaxis_title='Percentage',
+    xaxis_tickangle=-45,
+    yaxis_ticksuffix='%'
+)
+
+# Control width using Streamlit container
+col1, col2 = st.columns([4, 1])
+with col1:
+    st.plotly_chart(fig, use_container_width=True)
