@@ -1,6 +1,6 @@
 with source as (
   select *
-  from { { source ('abm3_resident_output', 'final_households') } }
+  from {{ source('abm3_resident_output', 'final_households') }}
 ),
 filter_columns as (
   select household_id,
