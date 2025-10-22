@@ -1,19 +1,20 @@
-with source as (
-  SELECT * FROM {{ source ('abm3_resident_output', 'final_households') }}
+with
+
+source as (
+
+    select * from {{ source('abm3_resident_output', 'final_households') }}
+
 ),
 
-hhsize_capped as (
-  SELECT 
-  *,
-  --- add column capping hhsize at 5
-  CASE 
-    WHEN hhsize > 5 THEN 5 
-    ELSE hhsize 
-  END::INTEGER AS hhsize_capped
-  FROM source
-  --- remove group quarters
-  WHERE unittype = 0
+filter_columns as (
+
+    select 
+        household_id,
+        hhsize,
+        auto_ownership,
+        unittype
+    from source
+
 )
 
-select * from hhsize_capped
-
+select * from filter_columns
