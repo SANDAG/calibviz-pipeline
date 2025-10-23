@@ -1,15 +1,18 @@
 sources:
   - name: abm3_resident_output
     meta:
-      external_location: 'T:/STORAGE-63T/2025RP_draft/abm_runs_v2/2022_S0_v2/output/resident/{name}.csv'
+      external_location: '../data/abm3/{name}.csv'
     tables:
       - name: final_trips
       - name: final_households
       - name: final_persons
+      - name: final_tours
   - name: hts
     meta:
-      external_location: 'T:/STORAGE-63T/2025RP_draft/abm_runs_v2/2022_S0_v2/src/asim/visualizer/visualizer/hts_2022/{name}.csv'
+      external_location: '../data/hts/{name}.csv'
     tables:
       - name: hhSizeDist
       - name: autoOwnership
       - name: tripModeProfile_vis
+      - name: transponder_ownership
+      - name: tmodeProfile_vis
