@@ -2,3 +2,4 @@
 data/
 *.duckdb
 logs/
+*.pyc
