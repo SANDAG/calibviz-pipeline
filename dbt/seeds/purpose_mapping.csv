@@ -1,0 +1,11 @@
+﻿purpose_abm3,purpose_hts
+work,1: Work
+univ,2: University
+school,3: School
+escort,4: Escort
+shopping,5: Individual Maintenance
+othmaint,5: Individual Maintenance
+eatout,6: Individual Discretionary
+social,7: Joint Maintenance
+othdiscr,8: Joint Discretionary
+atwork,9: Work-based
