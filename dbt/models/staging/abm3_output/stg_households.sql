@@ -6,7 +6,8 @@ filter_columns as (
   select household_id,
     hhsize,
     auto_ownership,
-    unittype
+    unittype,
+    num_adults
   from source
 )
 select *

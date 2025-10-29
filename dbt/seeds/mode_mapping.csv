@@ -1,11 +1,11 @@
-﻿trip_mode_abm3,trip_mode_hts
+﻿mode_abm3,mode_hts
 DRIVEALONE,01: SOV
 SHARED2,02: Shared Ride 2
 SHARED3,03: Shared Ride 3+
 WALK,04: Walk
 BIKE,05: Bike
-07: E-Scooter,07: E-Scooter
 EBIKE,06: E-Bike
+E-Scooter,07: E-Scooter
 WALK_LOC,08: Walk to Transit
 WALK_MIX,08: Walk to Transit
 WALK_PRM,08: Walk to Transit
@@ -18,7 +18,7 @@ KNR_PRM,10: KNR to Transit
 TNC_LOC,11: TNC to Transit
 TNC_MIX,11: TNC to Transit
 TNC_PRM,11: TNC to Transit
-SCH_BUS,15: School Bus
+TAXI,12: Taxi
 TNC_SINGLE,13: TNC Single
 TNC_SHARED,14: TNC Shared
-TAXI,12: Taxi
+SCH_BUS,15: School Bus
