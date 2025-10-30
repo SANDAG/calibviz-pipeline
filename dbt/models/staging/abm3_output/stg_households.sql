@@ -6,6 +6,7 @@ filter_columns as (
   select household_id,
     hhsize,
     auto_ownership,
+    transponder_ownership,
     unittype,
     num_adults
   from source
