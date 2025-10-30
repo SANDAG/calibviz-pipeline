@@ -147,7 +147,7 @@ with table_col:
             )
         },
         use_container_width=True,
-        height='stretch'
+        #height='stretch',
         hide_index=True
     )
 
