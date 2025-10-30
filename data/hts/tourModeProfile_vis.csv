@@ -1,4 +1,4 @@
-veh_ownership_category,tour_mode,purpose,freq
+OwnershipCategory,tour_mode,purpose,freq
 0: No Vehicles,01: SOV,9: Work-based,1543
 0: No Vehicles,01: SOV,6: Individual Discretionary,11654
 0: No Vehicles,01: SOV,5: Individual Maintenance,7975

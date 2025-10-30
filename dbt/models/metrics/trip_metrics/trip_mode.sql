@@ -19,7 +19,7 @@ abm3_source as (
         trip_mode,
         tour_mode,
         tour_purpose,
-        count(weight_person_trip) as abm_trips
+        sum(weight_person_trip) as abm_trips
     from abm3_temp as t
     group by trip_mode, tour_mode, tour_purpose
 ),
@@ -33,13 +33,13 @@ hts_source as (
 ),
 hts_abm3_trip_mode_joined as (
     select 
-        s.trip_mode,
-        s.tour_mode, 
-        s.tour_purpose, 
-        s.abm_trips, 
-        h.hts_trips
+        coalesce(s.trip_mode, h.trip_mode) as trip_mode,
+        coalesce(s.tour_mode, h.tour_mode) as tour_mode,
+        coalesce(s.tour_purpose, h.tour_purpose) as tour_purpose,
+        coalesce(s.abm_trips, 0) as abm_trips, 
+        coalesce(h.hts_trips, 0) as hts_trips
     from abm3_source s
-    join hts_source h
+    full join hts_source h
     on s.trip_mode = h.trip_mode
     and s.tour_mode = h.tour_mode
     and s.tour_purpose = h.tour_purpose

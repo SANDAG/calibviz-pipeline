@@ -26,7 +26,7 @@ abm3_source as (
 ),
 hts_source as (
     select
-        veh_ownership_category,
+        OwnershipCategory as veh_ownership_category,
         tour_mode,
         purpose,
         freq as hts_tours
@@ -34,13 +34,13 @@ hts_source as (
 ),
 hts_abm3_tour_mode_joined as (
     select 
-        s.veh_ownership_category,
-        s.tour_mode, 
-        s.purpose, 
-        s.abm_tours, 
-        h.hts_tours
+        coalesce(s.veh_ownership_category, h.veh_ownership_category) as veh_ownership_category,
+        coalesce(s.tour_mode, h.tour_mode) as tour_mode,
+        coalesce(s.purpose, h.purpose) as purpose,
+        coalesce(s.abm_tours, 0) as abm_tours, 
+        coalesce(h.hts_tours, 0) as hts_tours
     from abm3_source s
-    join hts_source h
+    full join hts_source h
     on s.tour_mode = h.tour_mode
     and s.purpose = h.purpose
     and s.veh_ownership_category = h.veh_ownership_category
