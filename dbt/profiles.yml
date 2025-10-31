@@ -1,0 +1,17 @@
+calibviz_pipeline:
+  outputs:
+    dev:
+      type: duckdb
+      path: ../resident_calibration.duckdb
+      schema: calibration
+      extensions:
+        - delta
+        - parquet
+      threads: 10
+
+    prod:
+      type: duckdb
+      path: prod.duckdb
+      threads: 4
+
+  target: dev

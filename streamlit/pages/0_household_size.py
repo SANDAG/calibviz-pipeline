@@ -17,7 +17,8 @@ display_connection_status()
 
 # Query and display data
 conn = get_db_connection()
-df = conn.execute("SELECT hhsize, abm_proportion, hts_proportion FROM main.household_size").fetch_df()
+
+df = conn.execute("SELECT hhsize, abm_proportion, hts_proportion FROM calibration_metrics.household_size").fetch_df()
 
 df_display = df.copy()
 df_display['abm_percentage'] = df_display['abm_proportion'] * 100

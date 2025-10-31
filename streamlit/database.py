@@ -48,7 +48,7 @@ def query_household_size(_conn: duckdb.DuckDBPyConnection) -> Tuple[Optional[pd.
     
     try:
         start = time.time()
-        query = "SELECT hhsize, abm_percentage, hts_percentage FROM main.hhsize"
+        query = "SELECT hhsize, abm_percentage, hts_percentage FROM calibration_metrics.hhsize"
         result = _conn.execute(query).fetch_df()
         elapsed = time.time() - start
         return result
@@ -103,7 +103,7 @@ def query_table_info(_conn: duckdb.DuckDBPyConnection, table_name: str) -> Optio
         return None
     
     try:
-        query = f"DESCRIBE main.{table_name}"
+        query = f"DESCRIBE calibration_staging.{table_name}"
         return _conn.execute(query).fetch_df()
     except Exception as e:
         st.error(f"❌ Failed to describe table '{table_name}': {e}")
@@ -152,7 +152,7 @@ def get_table_row_count(_conn: duckdb.DuckDBPyConnection, table_name: str) -> Op
         return None
     
     try:
-        query = f"SELECT COUNT(*) as count FROM main.{table_name}"
+        query = f"SELECT COUNT(*) as count FROM calibration_staging.{table_name}"
         result = _conn.execute(query).fetch_df()
         return result['count'][0]
     except Exception as e:
@@ -212,7 +212,7 @@ def get_database_stats(_conn: duckdb.DuckDBPyConnection) -> dict:
         hhsize_df = query_household_size(_conn)
         if hhsize_df is not None:
             stats['total_household_records'] = len(hhsize_df)
-            stats['avg_stg_percentage'] = hhsize_df['stg_percentage'].mean()
+            stats['avg_abm3_percentage'] = hhsize_df['abm3_percentage'].mean()
             stats['avg_hts_percentage'] = hhsize_df['hts_percentage'].mean()
     except Exception as e:
         st.warning(f"⚠️ Could not fetch all database stats: {e}")
