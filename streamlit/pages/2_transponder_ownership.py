@@ -19,7 +19,7 @@ display_connection_status()
 # Query and display data
 conn = get_db_connection()
 
-df = conn.execute("SELECT transponder_ownership, household_type, abm_proportion, hts_proportion FROM main.transponder_ownership").fetch_df()
+df = conn.execute("SELECT transponder_ownership, household_type, abm_proportion, hts_proportion FROM main_metrics.transponder_ownership").fetch_df()
 
 
 # Display data
