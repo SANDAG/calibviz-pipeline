@@ -20,19 +20,11 @@ conn = get_db_connection()
 df = conn.execute("SELECT hhsize, abm_proportion, hts_proportion FROM main.household_size").fetch_df()
 
 df_display = df.copy()
-df_display['abm_percentage'] = df_display['abm_proportion'] * 100
 df_display['hts_percentage'] = df_display['hts_proportion'] * 100
+df_display['abm_percentage'] = df_display['abm_proportion'] * 100
 df_display = df_display.drop(columns=['abm_proportion', 'hts_proportion'])
 
 fig = go.Figure()
-
-# Add ABM bars
-fig.add_trace(go.Bar(
-    name='ABM',
-    x=df_display['hhsize'],
-    y=df_display['abm_percentage'],
-    hovertemplate='Household Size: %{x}<br>ABM: %{y:.1f}%<extra></extra>'
-))
 
 # Add HTS bars
 fig.add_trace(go.Bar(
@@ -40,6 +32,14 @@ fig.add_trace(go.Bar(
     x=df_display['hhsize'],
     y=df_display['hts_percentage'],
     hovertemplate='Household Size: %{x}<br>HTS: %{y:.1f}%<extra></extra>'
+))
+
+# Add ABM bars
+fig.add_trace(go.Bar(
+    name='ABM',
+    x=df_display['hhsize'],
+    y=df_display['abm_percentage'],
+    hovertemplate='Household Size: %{x}<br>ABM: %{y:.1f}%<extra></extra>'
 ))
 
 fig.update_layout(
