@@ -5,9 +5,7 @@ with source as (
 filter_columns as (
     select trip_id,
         tour_id,
-        person_id,
         household_id,
-        tour_participants,
         trip_mode,
         purpose,
         primary_purpose,
@@ -16,10 +14,6 @@ filter_columns as (
         destination,
         otaz,
         dtaz,
-        parking_zone,
-        trip_num,
-        trip_count,
-        owns_transponder,
         weight_trip,
         weight_person_trip
     from source

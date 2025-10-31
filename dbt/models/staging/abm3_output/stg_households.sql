@@ -7,7 +7,8 @@ filter_columns as (
     hhsize,
     auto_ownership,
     transponder_ownership,
-    unittype
+    unittype,
+    num_adults
   from source
 )
 select *
