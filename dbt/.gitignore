@@ -3,5 +3,9 @@ target/
 dbt_packages/
 logs/
 profiles.yml
+<<<<<<< HEAD
 .user.yml
 local_duckdb_cache/
+=======
+.user.yml
+>>>>>>> 28b6da9951f4f28032eb9ad37294f0113fbccd9d

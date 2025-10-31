@@ -1,6 +1,12 @@
 .venv/
+<<<<<<< HEAD
 local_data/
 *.duckdb
 logs/
 *.pyc
 *.parquet
+=======
+*.duckdb
+logs/
+*.pyc
+>>>>>>> 28b6da9951f4f28032eb9ad37294f0113fbccd9d

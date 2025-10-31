@@ -9,16 +9,16 @@ from database import (
     display_connection_status
 )
 
-st.set_page_config(page_title="Vehicle Ownership Distribution", layout="wide")
+st.set_page_config(page_title="Transponder Ownership Distribution", layout="wide")
 
-st.title("Vehicle Ownership")
+st.title("Transponder Ownership")
 
 display_connection_status()
 
 # Query and display data
 conn = get_db_connection()
 
-df = conn.execute("SELECT auto_ownership, abm_proportion, hts_proportion FROM calibration_metrics.vehicle_ownership").fetch_df()
+df = conn.execute("SELECT transponder_ownership, household_type, abm_proportion, hts_proportion FROM calibration_metrics.transponder_ownership").fetch_df()
 
 df_display = df.copy()
 df_display['abm_percentage'] = df_display['abm_proportion'] * 100
@@ -30,22 +30,22 @@ fig = go.Figure()
 # Add ABM bars
 fig.add_trace(go.Bar(
     name='ABM',
-    x=df_display['auto_ownership'],
+    x=df_display['transponder_ownership'],
     y=df_display['abm_percentage'],
-    hovertemplate='Auto Ownership: %{x}<br>ABM: %{y:.1f}%<extra></extra>'
+    hovertemplate='Transponder Ownership: %{x}<br>ABM: %{y:.1f}%<extra></extra>'
 ))
 
 # Add HTS bars
 fig.add_trace(go.Bar(
     name='HTS',
-    x=df_display['auto_ownership'],
+    x=df_display['transponder_ownership'],
     y=df_display['hts_percentage'],
-    hovertemplate='Auto Ownership: %{x}<br>HTS: %{y:.1f}%<extra></extra>'
+    hovertemplate='Transponder Ownership: %{x}<br>HTS: %{y:.1f}%<extra></extra>'
 ))
 
 fig.update_layout(
     barmode='group',
-    xaxis_title='Auto Ownership',
+    xaxis_title='Transponder Ownership',
     yaxis_title='Percentage',
     yaxis_ticksuffix='%'
 )
@@ -64,7 +64,7 @@ with table_col:
             ),
             "hts_percentage": st.column_config.NumberColumn(
                 "HTS Percentage",
-                format="%.1f%%"
+                 format="%.1f%%"
             )
         },
         use_container_width=True,
