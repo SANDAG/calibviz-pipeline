@@ -4,7 +4,7 @@ source as (
     select 
         ptype, 
         count(*) * 100.0 / sum(count(*)) over () as percentage 
-    from {{ ref('stg_persons') }} 
+    from {{ ref('abm3_persons') }} 
     group by ptype
 
 ),
