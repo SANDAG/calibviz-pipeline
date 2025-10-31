@@ -7,12 +7,12 @@ with abm3_temp as (
         end as veh_ownership_category,
         coalesce(m.mode_hts, t.tour_mode) as tour_mode,
         coalesce(p.purpose_hts, t.primary_purpose) as purpose,
-    from {{ ref('abm3_tours') }} as t
+    from {{ ref('stg_abm3_tours') }} as t
     left join {{ ref('mode_mapping') }} as m
     on t.tour_mode = m.mode_abm3
     left join {{ ref('purpose_mapping') }} as p
     on t.primary_purpose = p.purpose_abm3
-    left join {{ ref('abm3_households') }} as h
+    left join {{ ref('stg_abm3_households') }} as h
     on t.household_id = h.household_id
 ), 
 abm3_source as (
@@ -30,7 +30,7 @@ hts_source as (
         tour_mode,
         purpose,
         freq as hts_tours
-    from {{ ref('hts_tourMode') }} as t
+    from {{ ref('stg_hts_tourMode') }} as t
 ),
 hts_abm3_tour_mode_joined as (
     select 

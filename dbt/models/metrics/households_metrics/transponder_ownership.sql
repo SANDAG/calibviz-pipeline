@@ -3,7 +3,7 @@ with abm3_source as (
         case when transponder_ownership then 'Yes' else 'No' end as transponder_ownership,
         'non-GQ' as household_type,
         count(*) * 1.0 / sum(count(*)) over () as proportion
-    from {{ ref('abm3_households') }} 
+    from {{ ref('stg_abm3_households') }} 
     where unittype = 0 --non-GQ only
     group by transponder_ownership, household_type
     UNION ALL
@@ -11,7 +11,7 @@ with abm3_source as (
         case when transponder_ownership then 'Yes' else 'No' end as transponder_ownership,
         'all households (includes GQ)' as household_type,
         count(*) * 1.0 / sum(count(*)) over () as proportion
-    from {{ ref('abm3_households') }} 
+    from {{ ref('stg_abm3_households') }} 
     --where unittype = 0 --all households including GQ
     group by transponder_ownership,household_type
 ),
@@ -20,7 +20,7 @@ hts_source as (
     select 
         case when transponder then 'Yes' else 'No' end as transponder_ownership,  
         share as proportion 
-    FROM {{ ref('hts_transponderOwnership') }}
+    FROM {{ ref('stg_hts_transponderOwnership') }}
 ),
 
 hts_abm3_joined as (
