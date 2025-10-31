@@ -6,6 +6,7 @@ sources:
       - name: final_trips
       - name: final_households
       - name: final_persons
+      - name: final_tours
   - name: general_survey
     meta:
       external_location: '../data/{name}.csv'
@@ -18,6 +19,8 @@ sources:
       - name: hhSizeDist
       - name: autoOwnership
       - name: tripModeProfile_vis
+      - name: transponder_ownership
+      - name: tmodeProfile_vis
   - name: databricks_calibration
     tables:
       - name: calib__tripcount_by_mode_choice
