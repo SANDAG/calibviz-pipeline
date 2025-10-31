@@ -34,10 +34,15 @@ models:
     # Config indicated by + and applies to all files under models/example/
     staging:
       +materialized: table
+      +schema: staging
       +tags: ['staging']
     metrics:
-      +materialized: view
+      +materialized: table
+      +schema: metrics
       +tags: ['metrics']
+seeds:
+  calibviz_pipeline:
+      +schema: column_mapping
 
 vars:
   scenarios: 
