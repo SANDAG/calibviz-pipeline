@@ -2,6 +2,10 @@
 target/
 dbt_packages/
 logs/
+<<<<<<< HEAD
 profiles.yml
 .user.yml
 local_duckdb_cache/
+=======
+dbt/local_duckdb_cache/
+>>>>>>> 9f4b51f (Added more files related to Airport model)

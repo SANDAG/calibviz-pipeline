@@ -1,6 +1,10 @@
 .venv/
 *.duckdb
 logs/
+<<<<<<< HEAD
 *.pyc
 *.parquet
 local_data/
+=======
+dbt/local_duckdb_cache/
+>>>>>>> 9f4b51f (Added more files related to Airport model)

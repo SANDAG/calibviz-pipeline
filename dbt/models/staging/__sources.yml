@@ -8,7 +8,6 @@ sources:
       - name: final_households
       - name: final_persons
       - name: final_tours
-      - name: final_land_use
   - name: general_survey
     meta:
       external_location: '../local_data/{name}.csv'
