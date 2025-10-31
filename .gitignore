@@ -2,3 +2,4 @@
 data/
 *.duckdb
 logs/
+dbt/local_duckdb_cache/

@@ -19,7 +19,7 @@ hhsize_capped as (
     END::INTEGER AS hhsize_capped
   FROM source
   --- remove group quarters
-  WHERE unittype = 0
+  -- WHERE unittype = 0
 )
 
 SELECT * FROM hhsize_capped
