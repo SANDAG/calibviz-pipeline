@@ -2,4 +2,6 @@
 target/
 dbt_packages/
 logs/
-dbt/local_duckdb_cache/
+profiles.yml
+.user.yml
+local_duckdb_cache/
