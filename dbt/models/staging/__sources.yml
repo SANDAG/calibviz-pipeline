@@ -9,7 +9,7 @@ sources:
       - name: final_tours
   - name: general_survey
     meta:
-      external_location: '../data/{name}.csv'
+      external_location: '../local_data/{name}.csv'
     tables:
       - name: departing_trips_by_mode
   - name: hts
