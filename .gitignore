@@ -1,4 +1,5 @@
 .venv/
+<<<<<<< HEAD
 *.duckdb
 logs/
 <<<<<<< HEAD
@@ -8,3 +9,10 @@ local_data/
 =======
 dbt/local_duckdb_cache/
 >>>>>>> 9f4b51f (Added more files related to Airport model)
+=======
+local_data/
+*.duckdb
+logs/
+*.pyc
+*.parquet
+>>>>>>> 5f4d58e (Updated few files to allow rebasing)
