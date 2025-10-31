@@ -1,3 +1,7 @@
-with source as (SELECT * FROM {{ source('abm3_resident_output', 'final_trips') }})
+{{ config(
+       materialized='external',
+       location='local_duckdb_cache/final_trips.parquet',
+       format='parquet'
+   ) }}
 
-SELECT * FROM source
+SELECT * FROM {{ source('abm3_resident_output', 'final_trips') }}
