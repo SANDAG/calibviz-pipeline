@@ -100,17 +100,9 @@ df_filtered['abm_percentage'] = df_filtered['abm_tours'] * 100 / total_abm if to
 df_filtered['hts_percentage'] = df_filtered['hts_tours'] * 100 / total_hts if total_hts > 0 else 0
 
 # Keep only tour_mode and shares
-df_filtered = df_filtered[['tour_mode', 'abm_percentage', 'hts_percentage']]
+df_filtered = df_filtered[['tour_mode', 'hts_percentage', 'abm_percentage']]
 
 fig = go.Figure()
-
-# Add ABM bars
-fig.add_trace(go.Bar(
-    name='ABM',
-    x=df_filtered['tour_mode'],
-    y=df_filtered['abm_percentage'],
-    hovertemplate='Tour Mode: %{x}<br>ABM: %{y:.1f}%<extra></extra>'
-))
 
 # Add HTS bars
 fig.add_trace(go.Bar(
@@ -118,6 +110,14 @@ fig.add_trace(go.Bar(
     x=df_filtered['tour_mode'],
     y=df_filtered['hts_percentage'],
     hovertemplate='Tour Mode: %{x}<br>HTS: %{y:.1f}%<extra></extra>'
+))
+
+# Add ABM bars
+fig.add_trace(go.Bar(
+    name='ABM',
+    x=df_filtered['tour_mode'],
+    y=df_filtered['abm_percentage'],
+    hovertemplate='Tour Mode: %{x}<br>ABM: %{y:.1f}%<extra></extra>'
 ))
 
 fig.update_layout(
