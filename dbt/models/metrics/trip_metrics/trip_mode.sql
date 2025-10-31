@@ -4,10 +4,10 @@ with abm3_temp as (
         coalesce(m2.mode_hts, tours.tour_mode) as tour_mode,
         coalesce(purp.purpose_hts, tours.primary_purpose) as tour_purpose,
         trips.weight_person_trip
-    from {{ ref('stg_trips') }} as trips
+    from {{ ref('abm3_trips') }} as trips
     left join {{ ref('mode_mapping') }} as m1
     on trips.trip_mode = m1.mode_abm3
-    left join {{ ref('stg_tours') }} as tours
+    left join {{ ref('abm3_tours') }} as tours
     on trips.tour_id = tours.tour_id
     left join {{ ref('mode_mapping') }} as m2
     on tours.tour_mode = m2.mode_abm3
@@ -29,7 +29,7 @@ hts_source as (
         tour_mode,
         purpose	as tour_purpose, 
         value as hts_trips
-    from {{ ref('stg_tripMode') }} as t
+    from {{ ref('hts_tripMode') }} as t
 ),
 hts_abm3_trip_mode_joined as (
     select 
