@@ -1,7 +1,8 @@
 import streamlit as st
 import sys
-sys.path.append('..')
+import plotly.graph_objects as go
 
+sys.path.append('..')
 
 from database import (
     get_db_connection,
@@ -10,9 +11,7 @@ from database import (
 
 st.set_page_config(page_title="Transponder Ownership Distribution", layout="wide")
 
-
 st.title("Transponder Ownership")
-
 
 display_connection_status()
 
@@ -21,40 +20,10 @@ conn = get_db_connection()
 
 df = conn.execute("SELECT transponder_ownership, household_type, abm_proportion, hts_proportion FROM calibration_metrics.transponder_ownership").fetch_df()
 
-
-# Display data
-st.subheader("📊 Data Table")
 df_display = df.copy()
 df_display['abm_percentage'] = df_display['abm_proportion'] * 100
 df_display['hts_percentage'] = df_display['hts_proportion'] * 100
 df_display = df_display.drop(columns=['abm_proportion', 'hts_proportion'])
-
-st.dataframe(
-    df_display,
-    column_config={
-        "abm_percentage": st.column_config.NumberColumn(
-            "ABM Percentage",
-            format="%.1f%%"
-        ),
-        "hts_percentage": st.column_config.NumberColumn(
-            "HTS Percentage",
-            format="%.1f%%"
-        )
-    },
-   width=800
-)
-
-
-st.divider()
-
-
-
-
-# Display chart
-import plotly.graph_objects as go
-
-# Display chart
-st.subheader("📈 Distribution Comparison")
 
 fig = go.Figure()
 
@@ -78,11 +47,33 @@ fig.update_layout(
     barmode='group',
     xaxis_title='Transponder Ownership',
     yaxis_title='Percentage',
-    xaxis_tickangle=-45,
     yaxis_ticksuffix='%'
 )
 
-# Control width using Streamlit container
-col1, col2 = st.columns([4, 1])
-with col1:
+# Display data
+table_col, separator_col, chart_col = st.columns([1, 0.1, 2])
+
+with table_col:
+    st.subheader("📊 Data Table")
+    st.dataframe(
+        df_display,
+        column_config={
+            "abm_percentage": st.column_config.NumberColumn(
+                "ABM Percentage",
+                format="%.1f%%"
+            ),
+            "hts_percentage": st.column_config.NumberColumn(
+                "HTS Percentage",
+                 format="%.1f%%"
+            )
+        },
+        use_container_width=True,
+        hide_index=True
+    )
+
+with separator_col:
+    st.subheader("")  
+
+with chart_col:
+    st.subheader("📈 Distribution Comparison")
     st.plotly_chart(fig, use_container_width=True)
