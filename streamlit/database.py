@@ -48,7 +48,7 @@ def query_household_size(_conn: duckdb.DuckDBPyConnection) -> Tuple[Optional[pd.
     
     try:
         start = time.time()
-        query = "SELECT hhsize, abm_percentage, hts_percentage FROM main_metrics.hhsize"
+        query = "SELECT hhsize, abm_percentage, hts_percentage FROM calibration_metrics.hhsize"
         result = _conn.execute(query).fetch_df()
         elapsed = time.time() - start
         return result
@@ -103,7 +103,7 @@ def query_table_info(_conn: duckdb.DuckDBPyConnection, table_name: str) -> Optio
         return None
     
     try:
-        query = f"DESCRIBE main_staging.{table_name}"
+        query = f"DESCRIBE calibration_staging.{table_name}"
         return _conn.execute(query).fetch_df()
     except Exception as e:
         st.error(f"❌ Failed to describe table '{table_name}': {e}")
@@ -152,7 +152,7 @@ def get_table_row_count(_conn: duckdb.DuckDBPyConnection, table_name: str) -> Op
         return None
     
     try:
-        query = f"SELECT COUNT(*) as count FROM main_staging.{table_name}"
+        query = f"SELECT COUNT(*) as count FROM calibration_staging.{table_name}"
         result = _conn.execute(query).fetch_df()
         return result['count'][0]
     except Exception as e:
