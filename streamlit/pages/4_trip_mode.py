@@ -17,7 +17,7 @@ display_connection_status()
 
 # Query and display data
 conn = get_db_connection()
-df = conn.execute("SELECT trip_mode, tour_mode, tour_purpose, abm_trips, hts_trips FROM main.trip_mode ORDER BY trip_mode").fetch_df()
+df = conn.execute("SELECT trip_mode, tour_mode, tour_purpose, abm_trips, hts_trips FROM calibration_metrics.trip_mode ORDER BY trip_mode").fetch_df()
 
 # Prepare filter lists
 trip_modes_list = sorted(df['trip_mode'].unique(), key=lambda x: int(x.split(':')[0]))

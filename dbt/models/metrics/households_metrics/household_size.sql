@@ -9,7 +9,7 @@ with abm3_hhsize_capped as (
             else hhsize 
         end as hhsize,
         count(*) as household_count
-    from {{ ref('stg_households') }} 
+    from {{ ref('stg_abm3_households') }} 
     where unittype = 0 -- exclude group quarters
     group by 
         case 
@@ -30,7 +30,7 @@ hts_source as (
     select 
         hhsize, 
         FREQ * 1.0 / sum(FREQ) over () as proportion 
-    from {{ ref('stg_hhsizeDist') }}
+    from {{ ref('stg_hts_hhsizeDist') }}
 ),
 
 hts_abm3_joined as (

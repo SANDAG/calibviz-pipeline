@@ -2,7 +2,7 @@ with abm3_source as (
     select 
         auto_ownership,
         count(*) * 1.0 / sum(count(*)) over () as proportion
-    from {{ ref('stg_households') }} 
+    from {{ ref('stg_abm3_households') }} 
     group by auto_ownership
 ),
 
@@ -10,7 +10,7 @@ hts_source as (
     select 
         HHVEH as auto_ownership,  
         FREQ * 1.0 / sum(FREQ) over () as proportion 
-    FROM {{ ref('stg_autoOwnership') }}
+    FROM {{ ref('stg_hts_autoOwnership') }}
 ),
 
 hts_abm3_joined as (

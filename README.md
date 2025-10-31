@@ -67,7 +67,7 @@ dbt build
 
 # Other options:
   # Build specific model (if needed)
-  dbt build --select stg_autoOwnership
+  dbt build --select household_size
 
   # Build metrics and dependencies
   dbt build --select metrics+
