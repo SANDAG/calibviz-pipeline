@@ -42,7 +42,7 @@ models:
       +tags: ['metrics']
 seeds:
   calibviz_pipeline:
-      +schema: column_mapping
+      +schema: seeds
 
 vars:
   scenarios: 
