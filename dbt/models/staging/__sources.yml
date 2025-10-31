@@ -15,4 +15,4 @@ sources:
       - name: autoOwnership
       - name: tripModeProfile_vis
       - name: transponder_ownership
-      - name: tmodeProfile_vis
+      - name: tourModeProfile_vis
