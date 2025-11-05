@@ -6,6 +6,7 @@ filter_columns as (
     select
         tour_id,
         person_id,
+        household_id,
         tour_type,
         tour_category, 
         number_of_participants,
