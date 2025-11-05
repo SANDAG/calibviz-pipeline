@@ -13,6 +13,7 @@ filter_columns as (
         destination, 
         household_id, 
         tour_mode,
+        stop_frequency,
         primary_purpose
     from source
 )

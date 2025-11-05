@@ -14,6 +14,7 @@ filter_columns as (
         destination,
         otaz,
         dtaz,
+        distance_drive,
         weight_trip,
         weight_person_trip
     from source
