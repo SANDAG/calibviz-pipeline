@@ -29,54 +29,29 @@ selected_trip_modes = []
 selected_tour_modes = []
 selected_purposes = []
 
-# Initialize checkboxes in session state
-if 'trip_mode_initialized' not in st.session_state:
-    st.session_state.trip_mode_initialized = True
-    for trip_mode in trip_modes_list:
-        st.session_state[f"tr_{trip_mode}"] = True
-    for tour_mode in tour_modes_list:
-        st.session_state[f"to_{tour_mode}"] = True
-    for purp in tour_purposes_list:
-        st.session_state[f"tp_{purp}"] = True
-
 # === FILTERS SECTION (Collapsible at top) ===
 with st.expander("🔍 Filters", expanded=False):
-    if st.button("🔄 Reset Filters", use_container_width=False):
-        for trip_mode in trip_modes_list:
-            st.session_state[f"tr_{trip_mode}"] = True
-        
-        for tour_mode in tour_modes_list:
-            st.session_state[f"to_{tour_mode}"] = True
-        
-        for purp in tour_purposes_list:
-            st.session_state[f"tp_{purp}"] = True
-
-        st.rerun()
-    
-    st.divider()
-
-    filter_cols = st.columns(3)
     
     # Trip Mode Filter
-    with filter_cols[0]:
-        st.markdown("**Trip Mode**")
-        for trip_mode in trip_modes_list:
-            if st.checkbox(trip_mode, key=f"tr_{trip_mode}"):
-                selected_trip_modes.append(trip_mode)
+    selected_trip_modes = st.multiselect(
+        "Trip Mode",
+        options=trip_modes_list,
+        default=trip_modes_list
+    )
 
     # Tour Mode Filter
-    with filter_cols[1]:
-        st.markdown("**Tour Mode**")
-        for tour_mode in tour_modes_list:
-            if st.checkbox(tour_mode, key=f"to_{tour_mode}"):
-                selected_tour_modes.append(tour_mode)
+    selected_tour_modes = st.multiselect(
+        "Tour Mode",
+        options=tour_modes_list,
+        default=tour_modes_list
+    )
     
     # Purpose Filter
-    with filter_cols[2]:
-        st.markdown("**Tour Purpose**")
-        for purp in tour_purposes_list:
-            if st.checkbox(purp, key=f"tp_{purp}"):
-                selected_purposes.append(purp)
+    selected_purposes = st.multiselect(
+        "Tour Purpose",
+        options=tour_purposes_list,
+        default=tour_purposes_list
+    )
 
 # Apply filters
 df_filtered = df.copy()
