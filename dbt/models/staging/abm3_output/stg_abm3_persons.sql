@@ -4,7 +4,8 @@ with source as (
 ),
 filter_columns as (
     select person_id,
-        ptype
+        ptype,
+        household_id
     from source
 )
 select *
