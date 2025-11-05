@@ -9,72 +9,78 @@ Trips         ####        ####
 VMT           ####        ####
 */
 
-with abm_totals as (
-    select         
-        -- Total households
-        (select count(distinct household_id) from {{ ref('stg_abm3_households') }}) as abm_households,
-        (select count(distinct household_id) from {{ ref('stg_abm3_households') }} where unittype = 0) as abm_households_nongq,
-        (select count(distinct household_id) from {{ ref('stg_abm3_households') }} where unittype = 1) as abm_households_gq,
-        
-        -- Total population
-        (select count(distinct person_id) from {{ ref('stg_abm3_persons') }}) as abm_population,
-        (select count(distinct p.person_id) 
-         from {{ ref('stg_abm3_persons') }} as p
-         join {{ ref('stg_abm3_households') }} as h on p.household_id = h.household_id
-         where h.unittype = 0) as abm_population_nongq,
-        (select count(distinct p.person_id) 
-         from {{ ref('stg_abm3_persons') }} as p
-         join {{ ref('stg_abm3_households') }} as h on p.household_id = h.household_id
-         where h.unittype = 1) as abm_population_gq,
-        
-        -- Total tours
-        (select count(distinct tour_id) from {{ ref('stg_abm3_tours') }}) as abm_tours,
-        (select count(distinct t.tour_id) 
-         from {{ ref('stg_abm3_tours') }} as t
-         join {{ ref('stg_abm3_households') }} as h on t.household_id = h.household_id
-         where h.unittype = 0) as abm_tours_nongq,
-        (select count(distinct t.tour_id) 
-         from {{ ref('stg_abm3_tours') }} as t
-         join {{ ref('stg_abm3_households') }} as h on t.household_id = h.household_id
-         where h.unittype = 1) as abm_tours_gq,
-        
-        -- Total trips
-        (select sum(weight_person_trip) from {{ ref('stg_abm3_trips') }}) as abm_trips,
-        (select sum(tr.weight_person_trip) 
-         from {{ ref('stg_abm3_trips') }} as tr
-         join {{ ref('stg_abm3_households') }} as h on tr.household_id = h.household_id
-         where h.unittype = 0) as abm_trips_nongq,
-        (select sum(tr.weight_person_trip) 
-         from {{ ref('stg_abm3_trips') }} as tr
-         join {{ ref('stg_abm3_households') }} as h on tr.household_id = h.household_id
-         where h.unittype = 1) as abm_trips_gq,
-        
-        -- Total stops
-        (select sum(CAST(SUBSTRING(stop_frequency, 1, 1) AS INTEGER) + CAST(SUBSTRING(stop_frequency, 6, 1) AS INTEGER)) 
-         from {{ ref('stg_abm3_tours') }}) as abm_stops,
-        (select sum(CAST(SUBSTRING(t.stop_frequency, 1, 1) AS INTEGER) + CAST(SUBSTRING(t.stop_frequency, 6, 1) AS INTEGER))
-         from {{ ref('stg_abm3_tours') }} as t
-         join {{ ref('stg_abm3_households') }} as h on t.household_id = h.household_id
-         where h.unittype = 0) as abm_stops_nongq,
-        (select sum(CAST(SUBSTRING(t.stop_frequency, 1, 1) AS INTEGER) + CAST(SUBSTRING(t.stop_frequency, 6, 1) AS INTEGER))
-         from {{ ref('stg_abm3_tours') }} as t
-         join {{ ref('stg_abm3_households') }} as h on t.household_id = h.household_id
-         where h.unittype = 1) as abm_stops_gq,
-        
-        -- Total VMT
-        (select sum(distance_drive * weight_trip) from {{ ref('stg_abm3_trips') }}) as abm_vmt,
-        (select sum(tr.distance_drive * tr.weight_trip) 
-         from {{ ref('stg_abm3_trips') }} as tr
-         join {{ ref('stg_abm3_households') }} as h on tr.household_id = h.household_id
-         where h.unittype = 0) as abm_vmt_nongq,
-        (select sum(tr.distance_drive * tr.weight_trip) 
-         from {{ ref('stg_abm3_trips') }} as tr
-         join {{ ref('stg_abm3_households') }} as h on tr.household_id = h.household_id
-         where h.unittype = 1) as abm_vmt_gq
+with abm_households_cte as (
+    select 
+        count(distinct household_id) as abm_households,
+        count(distinct case when unittype = 0 then household_id end) as abm_households_nongq,
+        count(distinct case when unittype = 1 then household_id end) as abm_households_gq
+    from {{ ref('stg_abm3_households') }}
 ),
 
--- HTS totals
-hts_totals as (
+abm_population_cte as (
+    select
+        count(distinct p.person_id) as abm_population,
+        count(distinct case when h.unittype = 0 then p.person_id end) as abm_population_nongq,
+        count(distinct case when h.unittype = 1 then p.person_id end) as abm_population_gq
+    from {{ ref('stg_abm3_persons') }} as p
+    join {{ ref('stg_abm3_households') }} as h 
+    on p.household_id = h.household_id
+),
+
+abm_tours_cte as (
+    select
+        count(distinct t.tour_id) as abm_tours,
+        count(distinct case when h.unittype = 0 then t.tour_id end) as abm_tours_nongq,
+        count(distinct case when h.unittype = 1 then t.tour_id end) as abm_tours_gq
+    from {{ ref('stg_abm3_tours') }} as t
+    join {{ ref('stg_abm3_households') }} as h 
+    on t.household_id = h.household_id
+),
+
+abm_trips_cte as (
+    select
+        sum(tr.weight_person_trip) as abm_trips,
+        sum(case when h.unittype = 0 then tr.weight_person_trip end) as abm_trips_nongq,
+        sum(case when h.unittype = 1 then tr.weight_person_trip end) as abm_trips_gq
+    from {{ ref('stg_abm3_trips') }} as tr
+    join {{ ref('stg_abm3_households') }} as h 
+    on tr.household_id = h.household_id
+),
+
+abm_stops_cte as (
+    select
+        sum(
+            cast(substring(t.stop_frequency, 1, 1) as integer) + 
+            cast(substring(t.stop_frequency, 6, 1) as integer)
+        ) as abm_stops,
+        sum(
+            case when h.unittype = 0 then 
+                cast(substring(t.stop_frequency, 1, 1) as integer) + 
+                cast(substring(t.stop_frequency, 6, 1) as integer)
+            end
+        ) as abm_stops_nongq,
+        sum(
+            case when h.unittype = 1 then 
+                cast(substring(t.stop_frequency, 1, 1) as integer) + 
+                cast(substring(t.stop_frequency, 6, 1) as integer)
+            end
+        ) as abm_stops_gq
+    from {{ ref('stg_abm3_tours') }} as t
+    join {{ ref('stg_abm3_households') }} as h 
+    on t.household_id = h.household_id
+),
+
+abm_vmt_cte as (
+    select
+        sum(tr.distance_drive * tr.weight_trip) as abm_vmt,
+        sum(case when h.unittype = 0 then tr.distance_drive * tr.weight_trip end) as abm_vmt_nongq,
+        sum(case when h.unittype = 1 then tr.distance_drive * tr.weight_trip end) as abm_vmt_gq
+    from {{ ref('stg_abm3_trips') }} as tr
+    join {{ ref('stg_abm3_households') }} as h 
+    on tr.household_id = h.household_id
+),
+
+hts_totals_cte as (
     select 
         max(case when Variable = 'Households' then value else 0 end) as hts_households,
         max(case when Variable = 'Population' then value else 0 end) as hts_population,
@@ -92,7 +98,7 @@ hts_abm3_joined as (
         abm_households as ABM, 
         abm_households_nongq as ABM_NonGQ,
         abm_households_gq as ABM_GQ
-    from hts_totals, abm_totals
+    from hts_totals_cte, abm_households_cte
     
     union all 
     
@@ -102,7 +108,7 @@ hts_abm3_joined as (
         abm_population as ABM, 
         abm_population_nongq as ABM_NonGQ,
         abm_population_gq as ABM_GQ
-    from hts_totals, abm_totals
+    from hts_totals_cte, abm_population_cte
     
     union all 
     
@@ -112,7 +118,7 @@ hts_abm3_joined as (
         abm_tours as ABM,
         abm_tours_nongq as ABM_NonGQ,
         abm_tours_gq as ABM_GQ
-    from hts_totals, abm_totals
+    from hts_totals_cte, abm_tours_cte
 
     union all 
     
@@ -122,7 +128,7 @@ hts_abm3_joined as (
         abm_trips as ABM,
         abm_trips_nongq as ABM_NonGQ,
         abm_trips_gq as ABM_GQ
-    from hts_totals, abm_totals
+    from hts_totals_cte, abm_trips_cte
 
     union all 
     
@@ -132,7 +138,7 @@ hts_abm3_joined as (
         abm_stops as ABM,
         abm_stops_nongq as ABM_NonGQ,
         abm_stops_gq as ABM_GQ
-    from hts_totals, abm_totals
+    from hts_totals_cte, abm_stops_cte
         
     union all 
     
@@ -142,10 +148,10 @@ hts_abm3_joined as (
         abm_vmt as ABM,
         abm_vmt_nongq as ABM_NonGQ,
         abm_vmt_gq as ABM_GQ
-    from hts_totals, abm_totals
+    from hts_totals_cte, abm_vmt_cte
 )
 
 select Variables, HTS, ABM, 
-    case when ABM_NonGQ is not null then ABM_NonGQ else 0 end as ABM_NonGQ,
-    case when ABM_GQ is not null then ABM_GQ else 0 end as ABM_GQ
+    COALESCE(ABM_NonGQ, 0) as ABM_NonGQ,
+    COALESCE(ABM_GQ, 0) as ABM_GQ
 from hts_abm3_joined
