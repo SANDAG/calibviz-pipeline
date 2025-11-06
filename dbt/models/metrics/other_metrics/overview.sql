@@ -113,6 +113,16 @@ hts_abm3_joined as (
     union all 
     
     select 
+        'Stops' as Variables,
+        hts_stops as HTS,
+        abm_stops as ABM,
+        abm_stops_nongq as ABM_NonGQ,
+        abm_stops_gq as ABM_GQ
+    from hts_totals_cte, abm_stops_cte
+        
+    union all 
+
+    select 
         'Tours' as Variables,
         hts_tours as HTS,
         abm_tours as ABM,
@@ -131,17 +141,7 @@ hts_abm3_joined as (
     from hts_totals_cte, abm_trips_cte
 
     union all 
-    
-    select 
-        'Stops' as Variables,
-        hts_stops as HTS,
-        abm_stops as ABM,
-        abm_stops_nongq as ABM_NonGQ,
-        abm_stops_gq as ABM_GQ
-    from hts_totals_cte, abm_stops_cte
         
-    union all 
-    
     select 
         'VMT' as Variables,
         hts_vmt as HTS,
