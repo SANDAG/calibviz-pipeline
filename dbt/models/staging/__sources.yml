@@ -23,6 +23,13 @@ sources:
       - name: tripModeProfile_vis
       - name: transponder_ownership
       - name: tmodeProfile_vis
+  - name: abm3_airport_output
+    meta: 
+      external_location: 'T:/STORAGE-63T/2025RP_draft/abm_runs_v2/2022_S0_v2/output/airport.SAN/{name}.csv'
+    tables:
+      - name: final_santrips
+      - name: final_santours
+
   - name: databricks_calibration
     tables:
       - name: calib__tripcount_by_mode_choice
