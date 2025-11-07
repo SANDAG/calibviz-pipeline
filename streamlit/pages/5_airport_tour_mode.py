@@ -21,13 +21,14 @@ conn = get_db_connection()
 df = conn.execute("SELECT * FROM main_metrics.tour_share_by_mode").fetch_df()
 
 # Add filter for dimension
-dimension_filter = st.selectbox("Select Dimension", options=df['dimension'].unique())
-level_filter = st.selectbox("Select Level", options=df['level'].unique())
+dimension_filter = st.selectbox("Select Dimension (e.g. type to aggregate by)", options=df['dimension'].unique())
+level_filter = st.selectbox("Select Level (aggregated (visitor, resident), detailed (e.g. res_nb, vis_nb), total (by aggregated type), employee)", options=df['level'].unique())
 
 
 filtered_df = df[(df['dimension'] == dimension_filter) & (df['level'] == level_filter)]
 
 st.dataframe(filtered_df)
+st.write("### Breakdown by Tour Type")
 st.bar_chart(filtered_df, x='tour_type', y=['model_percentage', 'survey_percentage'],  stack=False)
-
+st.write("### Breakdown by Dimension Value")
 st.bar_chart(filtered_df, x='dimension_value', y=['model_percentage', 'survey_percentage'],  stack=False)
