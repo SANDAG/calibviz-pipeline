@@ -53,9 +53,11 @@ SELECT
         else tour_type
     end as tour_type_general,
     outbound,
-    COALESCE(amts.mapped_value, trip_joined_xref.arrival_mode) AS arrival_mode,
+    -- mode mapping
+    COALESCE(m.mapped_mode, amts.mapped_value) as arrival_mode,
     weight_person_trip as trip
 FROM trip_joined_xref
 JOIN tour_source ts USING (tour_id)
 JOIN {{ ref('arrival_mode_to_survey') }} amts USING (arrival_mode)
+JOIN {{ ref ('arrival_mode_mapping')}} m USING (arrival_mode)
 WHERE trip_joined_xref.outbound = True and ts.tour_type != 'external'

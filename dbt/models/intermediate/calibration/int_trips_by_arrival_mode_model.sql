@@ -1,7 +1,6 @@
 -- models/intermediate/int_trips_by_arrival_mode.sql
 WITH base_data AS (
     SELECT * FROM {{ ref('stg_tripcount_mode') }}
-    -- WHERE scenario_id IN ({{ var('calibration_scenario_id') }}) AND model in ({{ var('calibration_model') }})
 ),
 
 -- Detailed level (non-employee) (e.g. res_nb, vis_nb, etc.)
