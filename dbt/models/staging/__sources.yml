@@ -13,6 +13,7 @@ sources:
       external_location: '../data/hts/{name}.csv'
       # external_location: 'T:/STORAGE-63T/2025RP_draft/abm_runs_v2/2022_S0_v2/src/asim/visualizer/visualizer/hts_2022/{name}.csv'
     tables:
+      - name: totals
       - name: hhSizeDist
       - name: autoOwnership
       - name: tripModeProfile_vis
