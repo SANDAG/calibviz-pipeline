@@ -18,7 +18,7 @@ display_connection_status()
 
 # Query and display data
 conn = get_db_connection()
-df = conn.execute("SELECT * FROM main_metrics.tour_share_by_mode").fetch_df()
+df = conn.execute("SELECT * FROM calibration_metrics.tour_share_by_mode").fetch_df()
 
 # Add filter for dimension
 dimension_filter = st.selectbox("Select Dimension (e.g. type to aggregate by)", options=df['dimension'].unique())
@@ -36,7 +36,7 @@ if show_percentage:
     y_cols = ['model_percentage', 'survey_percentage']
     y_label = "Percentage"
 else:
-    y_cols = ['model_trip', 'survey_trip']  # Adjust these column names to match your data
+    y_cols = ['model_trip', 'survey_trip']
     y_label = "Count"
 
 st.write(f"### Breakdown by Tour Type ({y_label})")
