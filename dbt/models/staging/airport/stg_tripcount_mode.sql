@@ -54,10 +54,12 @@ SELECT
     end as tour_type_general,
     outbound,
     -- mode mapping
-    COALESCE(m.mapped_mode, amts.mapped_value) as arrival_mode,
+    -- amts.mapped_value as arrival_mode,
+    COALESCE(m.final_mode, trip_joined_xref.arrival_mode) as arrival_mode,
     weight_person_trip as trip
 FROM trip_joined_xref
 JOIN tour_source ts USING (tour_id)
-JOIN {{ ref('arrival_mode_to_survey') }} amts USING (arrival_mode)
-JOIN {{ ref ('arrival_mode_mapping')}} m USING (arrival_mode)
-WHERE trip_joined_xref.outbound = True and ts.tour_type != 'external'
+LEFT JOIN {{ ref('arrival_mode_mapping') }} m ON m.original_mode = trip_joined_xref.arrival_mode
+-- JOIN {{ ref('arrival_mode_to_survey') }} amts USING (arrival_mode)
+---JOIN {{ ref ('arrival_mode_mapping')}} m USING (arrival_mode)
+WHERE trip_joined_xref.outbound = True AND ts.tour_type != 'external'
