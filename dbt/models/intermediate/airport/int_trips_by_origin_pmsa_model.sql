@@ -36,22 +36,8 @@ employee_only AS (
     ) }}
 ),
 
-general_totals AS (
-    {{ aggregate_sum_percentages(
-        source_table='base_data',
-        dimension_columns=['tour_type_general'],
-        weight_column='trip',
-        partition_column=None,
-        where_clause="tour_type != 'emp'"
-    ) }}
-)
-
-
-
-
-
-
-SELECT 
+combined as (
+    SELECT 
     'detailed' AS level,
     origin_pmsa,
     tour_type,
@@ -78,13 +64,46 @@ SELECT
     trip,
     percentage
 FROM employee_only
+),
+
+tour_type_totals AS (
+    {{ aggregate_sum_percentages(
+        source_table='combined',
+        dimension_columns=['tour_type'],
+        weight_column='trip',
+        partition_column=None,
+        where_clause="tour_type != 'emp'"
+    ) }}
+),
+
+origin_pmsa_totals AS (
+    {{ aggregate_sum_percentages(
+        source_table='combined',
+        dimension_columns=['origin_pmsa'],
+        weight_column='trip',
+        partition_column=None,
+        where_clause="tour_type != 'emp'"
+    ) }}
+)
+
+SELECT * FROM combined
 
 UNION ALL
 
-SELECT
+SELECT 
     'total' AS level,
-    'total' as origin_pmsa,
-    tour_type_general AS tour_type,
+    origin_pmsa,
+    'total' as tour_type,
     trip,
     percentage
-FROM general_totals
+FROM origin_pmsa_totals
+
+UNION ALL
+
+SELECT 
+    'total' AS level,
+    'total' as origin_pmsa,
+    tour_type,
+    trip,
+    percentage
+FROM tour_type_totals

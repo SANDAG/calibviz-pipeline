@@ -1,6 +1,7 @@
 import streamlit as st
 import sys
 import plotly.graph_objects as go
+import plotly.express as px
 
 sys.path.append('..')
 
@@ -22,25 +23,64 @@ df = conn.execute("SELECT * FROM calibration_metrics.tour_share_by_mode").fetch_
 
 # Add filter for dimension
 dimension_filter = st.selectbox("Select Dimension (e.g. type to aggregate by)", options=df['dimension'].unique())
-level_filter = st.selectbox("Select Level (aggregated (visitor, resident), detailed (e.g. res_nb, vis_nb), total (by aggregated type), employee)", options=df['level'].unique())
+level_filter = st.selectbox("Select Level (aggregated (visitor, resident), detailed (e.g. res_nb, vis_nb), total (by aggregated type), employee)", options=df['tour_type'].unique())
 
-filtered_df = df[(df['dimension'] == dimension_filter) & (df['level'] == level_filter)]
+if level_filter != 'total':
+    filtered_df = df[(df['dimension'] == dimension_filter) & (df['tour_type'] == level_filter) & (df['level'] != 'total')]
+else:
+    filtered_df = df[(df['dimension'] == dimension_filter) & (df['level'] == 'total') & (df['dimension_value'] != 'total')]
 
-st.dataframe(filtered_df)
+
+with st.expander("View Filtered Data", expanded=False):
+    st.dataframe(filtered_df)
 
 # Add toggle for switching between percentage and count values
 show_percentage = st.toggle("Show Percentage", value=True)
 
 # Set y-axis columns based on toggle
 if show_percentage:
-    y_cols = ['model_percentage', 'survey_percentage']
+    value_vars = ['survey_percentage', 'model_percentage']
     y_label = "Percentage"
+    value_col = 'percentage'
 else:
-    y_cols = ['model_trip', 'survey_trip']
+    value_vars = ['survey_trip', 'model_trip']
     y_label = "Count"
+    value_col = 'count'
 
-st.write(f"### Breakdown by Tour Type ({y_label})")
-st.bar_chart(filtered_df, x='tour_type', y=y_cols, stack=False)
 
+df_dimension = filtered_df.melt(
+    id_vars=['dimension_value'],
+    value_vars=value_vars,
+    var_name='source',
+    value_name=value_col
+)
+
+# Clean up source names to 'Survey' and 'Model'
+#df_tour['source'] = df_tour['source'].str.replace('_percentage|_trip|_count', '', regex=True).str.replace('survey', 'Survey').str.replace('model', 'Model')
+df_dimension['source'] = df_dimension['source'].str.replace('_percentage|_trip|_count', '', regex=True).str.replace('survey', 'Survey').str.replace('model', 'Model')
+
+# Chart 2: Breakdown by Dimension Value
 st.write(f"### Breakdown by Dimension Value ({y_label})")
-st.bar_chart(filtered_df, x='dimension_value', y=y_cols, stack=False)
+
+dimension_value_order = ['Drop-off/Pick up', 
+                   'UBER/Lyft', 
+                   'Taxi', 
+                   'Personal Car Parked', 
+                   'Shared Shuttle Van', 
+                   'Rental Car', 
+                   'Walk', 
+                   'Public Transportation',
+                   'employee_shuttle']
+
+fig2 = px.bar(
+    df_dimension,
+    x='dimension_value',
+    y=value_col,
+    color='source',
+    barmode='group',
+    category_orders={'source': ['Survey', 'Model'],
+                     'dimension_value': dimension_value_order},  # Fixed order!
+    labels={value_col: y_label, 'dimension_value': 'Dimension Value', 'source': ''}
+)
+
+st.plotly_chart(fig2, use_container_width=True)

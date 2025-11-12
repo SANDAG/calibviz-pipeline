@@ -36,19 +36,10 @@ employee_only AS (
     ) }}
 ),
 
-general_totals AS (
-    {{ aggregate_sum_percentages(
-        source_table='base_data',
-        dimension_columns=['tour_type_general'],
-        weight_column='trip',
-        partition_column=None,
-        where_clause="tour_type != 'emp'"
-    ) }}
-)
+-- test everything combined
 
-
-
-SELECT 
+combined as (
+    SELECT 
     'detailed' AS level,
     arrival_mode,
     tour_type,
@@ -75,13 +66,46 @@ SELECT
     trip,
     percentage
 FROM employee_only
+),
+
+tour_type_totals AS (
+    {{ aggregate_sum_percentages(
+        source_table='combined',
+        dimension_columns=['tour_type'],
+        weight_column='trip',
+        partition_column=None,
+        where_clause="tour_type != 'emp'"
+    ) }}
+),
+
+arrival_mode_totals AS (
+    {{ aggregate_sum_percentages(
+        source_table='base_data',
+        dimension_columns=['arrival_mode'],
+        weight_column='trip',
+        partition_column=None,
+        where_clause="tour_type != 'emp'"
+    ) }}
+)
+
+SELECT * FROM combined
 
 UNION ALL
 
-SELECT
+SELECT 
     'total' AS level,
-    'total' as arrival_mode,
-    tour_type_general AS tour_type,
+    arrival_mode,
+    'total' as tour_type,
     trip,
     percentage
-FROM general_totals
+FROM arrival_mode_totals
+
+UNION ALL
+
+SELECT 
+    'total' AS level,
+    'total' as arrival_mode,
+    tour_type,
+    trip,
+    percentage
+FROM tour_type_totals
