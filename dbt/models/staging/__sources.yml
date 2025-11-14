@@ -8,6 +8,11 @@ sources:
       - name: final_households
       - name: final_persons
       - name: final_tours
+  - name: general_survey
+    meta:
+      external_location: '../local_data/{name}.csv'
+    tables:
+      - name: departing_trips_by_mode
   - name: hts
     meta:
       external_location: '../data/hts/{name}.csv'
@@ -19,3 +24,18 @@ sources:
       - name: tripModeProfile_vis
       - name: transponder_ownership
       - name: tmodeProfile_vis
+  - name: abm3_airport_output
+    meta: 
+      external_location: 'T:/STORAGE-63T/2025RP_final/2022/output/airport.SAN/{name}.csv'
+    tables:
+      - name: final_santrips
+      - name: final_santours
+
+  - name: databricks_calibration
+    tables:
+      - name: calib__tripcount_by_mode_choice
+        config:
+          external_location: abfss://silver@adlsdasadsdevwest.dfs.core.windows.net/calibration/__unitystorage/schemas/2d0d1f25-0923-4cd1-9c1b-327ac0c98634/tables/256cc9dc-5ea0-421d-906a-4043d99af467
+      - name: calib__tripcount_by_taz
+        config:
+          external_location: abfss://silver@adlsdasadsdevwest.dfs.core.windows.net/calibration/__unitystorage/schemas/2d0d1f25-0923-4cd1-9c1b-327ac0c98634/tables/a9acc97c-e26b-4c85-94ce-47ed00d54f47

@@ -2,3 +2,5 @@
 *.duckdb
 logs/
 *.pyc
+*.parquet
+local_data/
