@@ -21,18 +21,36 @@ mgra_taz_pmsa_xref as (
     FROM {{ ref('mgra_taz_pmsa_xref') }}
 ),
 
+origin_pmsa_xref as (
+    SELECT *
+    FROM (VALUES
+        (1, 'DOWNTOWN'),
+        (2, 'CENTRAL'),
+        (3, 'NORTH_CITY'),
+        (4, 'SOUTH_SUBURBAN'),
+        (5, 'EAST_SUBURBAN'),
+        (6, 'NORTH_COUNTY_WEST'),
+        (7, 'NORTH_COUNTY_EAST'),
+        (8, 'EAST_COUNTY'),
+        (99, 'EXTERNAL')
+    ) AS t(pmsa_id, pmsa_name)
+),
+
 trip_joined_xref as (
     SELECT
         ts.*,
-        xref.origin_pmsa
+        xref.origin_pmsa,
+        pm.pmsa_name as origin_pmsa_name
     FROM trip_source ts
     LEFT JOIN mgra_taz_pmsa_xref xref 
         ON ts.origin_mgra = xref.mgra
+    LEFT JOIN origin_pmsa_xref pm 
+        ON xref.origin_pmsa = pm.pmsa_id
 )
 
 SELECT
     origin_mgra,
-    origin_pmsa::INTEGER::VARCHAR as origin_pmsa,
+    origin_pmsa_name::VARCHAR as origin_pmsa,
     CASE WHEN arrival_mode = 'TAXI_LOC1' THEN 'TAXI'
          WHEN arrival_mode = 'RIDEHAIL_LOC1' AND trip_mode = 'SHARED2' THEN 'TNC_SINGLE'
          WHEN arrival_mode = 'RIDEHAIL_LOC1' AND trip_mode = 'SHARED3' THEN 'TNC_SHARED'

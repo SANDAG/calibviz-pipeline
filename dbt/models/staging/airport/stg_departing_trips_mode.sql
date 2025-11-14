@@ -21,7 +21,7 @@ SELECT
     COALESCE(m.final_mode, s.airport_access_mode) as arrival_mode,
     inbound_bool as inbound,
     person_trips as trip,
-    origin_pmsa::INTEGER::VARCHAR as origin_pmsa
+    origin_pmsa_label::VARCHAR as origin_pmsa
 FROM source s
 LEFT JOIN arrival_mode_mapping m 
     ON m.intermediate_mode = s.airport_access_mode
