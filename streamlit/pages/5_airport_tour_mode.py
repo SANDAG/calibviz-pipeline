@@ -23,16 +23,19 @@ df = conn.execute("SELECT * FROM calibration_metrics.tour_share_by_mode").fetch_
 
 # Add filter for dimension
 dimension_filter = st.selectbox("Select Dimension (e.g. type to aggregate by)", options=df['dimension'].unique())
-level_filter = st.selectbox("Select Level (aggregated (visitor, resident), detailed (e.g. res_nb, vis_nb), total (by aggregated type), employee)", options=df['tour_type'].unique())
+level_filter = st.selectbox("Select Level (aggregated (visitor, resident), detailed (e.g. res_nb, vis_nb), total (by aggregated type), employee)", index=df['tour_type'].unique().tolist().index('total'), options=df['tour_type'].unique())
 
 if level_filter != 'total':
     filtered_df = df[(df['dimension'] == dimension_filter) & (df['tour_type'] == level_filter) & (df['level'] != 'total')]
 else:
     filtered_df = df[(df['dimension'] == dimension_filter) & (df['level'] == 'total') & (df['dimension_value'] != 'total')]
 
-
 with st.expander("View Filtered Data", expanded=False):
-    st.dataframe(filtered_df)
+    st.dataframe(filtered_df, column_config={\
+        "survey_percentage": st.column_config.NumberColumn(format="%.2f%%"),
+        "model_percentage": st.column_config.NumberColumn(format="%.2f%%"),
+        "percentage_diff": st.column_config.NumberColumn(format="%.2f%%"),
+    })
 
 # Add toggle for switching between percentage and count values
 show_percentage = st.toggle("Show Percentage", value=True)
