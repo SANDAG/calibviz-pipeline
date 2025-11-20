@@ -37,7 +37,6 @@ sources:
     meta: 
       external_location: 'T:/STORAGE-63T/ABM3_EMME_upgrade/2022_v1542/output/airport.SAN/{name}.csv'
     tables:
-<<<<<<< HEAD
       - name: final_santrips
       - name: final_santours
   - name: 2022_v1541_sparky
@@ -47,11 +46,3 @@ sources:
       - name: final_santrips
       - name: final_santours
 
-=======
-      - name: calib__tripcount_by_mode_choice
-        config:
-          external_location: abfss://silver@adlsdasadsdevwest.dfs.core.windows.net/calibration/__unitystorage/schemas/2d0d1f25-0923-4cd1-9c1b-327ac0c98634/tables/256cc9dc-5ea0-421d-906a-4043d99af467
-      - name: calib__tripcount_by_taz
-        config:
-          external_location: abfss://silver@adlsdasadsdevwest.dfs.core.windows.net/calibration/__unitystorage/schemas/2d0d1f25-0923-4cd1-9c1b-327ac0c98634/tables/a9acc97c-e26b-4c85-94ce-47ed00d54f47
->>>>>>> 5f4d58e (Updated few files to allow rebasing)
