@@ -31,11 +31,3 @@ sources:
       - name: final_santrips
       - name: final_santours
 
-  - name: databricks_calibration
-    tables:
-      - name: calib__tripcount_by_mode_choice
-        config:
-          external_location: ***REDACTED***
-      - name: calib__tripcount_by_taz
-        config:
-          external_location: ***REDACTED***
