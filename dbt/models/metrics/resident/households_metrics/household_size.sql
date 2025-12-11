@@ -1,6 +1,6 @@
 -- Calculate household size distribution as a share of total households
--- Exclude group quarters (e.g., large institutions, dorms) from source staging (where unittype = 0)
 -- Cap household sizes at 5+ for comparison with survey data
+-- Include or exclude group quarters based on the include_gq variable in dbt_project.yml
 
 with abm3_hhsize_capped as (
     select 
@@ -10,7 +10,7 @@ with abm3_hhsize_capped as (
         end as hhsize,
         count(*) as household_count
     from {{ ref('stg_abm3_households') }} 
-    where unittype = 0 -- exclude group quarters
+    where {{ include_gq_where('unittype') }}  -- -> will be "unittype = 0" if include_gq is false
     group by 
         case 
             when hhsize > 5 then 5 
