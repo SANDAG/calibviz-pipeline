@@ -115,7 +115,15 @@ hts_abm3_joined as (
         hts_vmt as HTS,
         abm_vmt as ABM,
     from hts_totals_cte, abm_vmt_cte
+),
+
+hts_abm3_scaled as (
+    select 
+        Variables, 
+        HTS, 
+        ABM / {{ var('sample_rate') }} as ABM, -- Scale ABM to match sample rate
+    from hts_abm3_joined
 )
 
 select Variables, HTS, ABM
-from hts_abm3_joined
+from hts_abm3_scaled
