@@ -18,16 +18,6 @@ with abm3_source as (
     order by pmsa.pmsa_name
 ),
 
-abm3_temp as 
-(
-    select persons.household_id, persons.person_id, persons.work_from_home, persons.is_worker
-    from {{ ref('stg_abm3_persons') }} as persons
-    left join {{ ref('stg_abm3_households') }} as households
-    on persons.household_id = households.household_id
-    where persons.is_worker = TRUE and
-    {{ include_gq_where('households.unittype') }}  -- -> will be "households.unittype = 0" if include_gq is false
-),
-
 hts_source as (
     select 
         District as district,
