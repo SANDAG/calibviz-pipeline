@@ -3,7 +3,6 @@ with abm3_source as (
         case when transponder_ownership then 'Yes' else 'No' end as transponder_ownership,
         count(*) * 1.0 / sum(count(*)) over () as proportion
     from {{ ref('stg_abm3_households') }} 
-    where {{ include_gq_where('unittype') }}  -- -> will be "unittype = 0" if include_gq is false
     group by 1
 ),
 

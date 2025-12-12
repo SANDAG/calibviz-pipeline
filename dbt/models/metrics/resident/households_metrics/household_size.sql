@@ -10,7 +10,6 @@ with abm3_hhsize_capped as (
         end as hhsize,
         count(*) as household_count
     from {{ ref('stg_abm3_households') }} 
-    where {{ include_gq_where('unittype') }}  -- -> will be "unittype = 0" if include_gq is false
     group by 
         case 
             when hhsize > 5 then 5 

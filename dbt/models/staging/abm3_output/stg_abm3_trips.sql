@@ -18,6 +18,13 @@ filter_columns as (
         weight_trip,
         weight_person_trip
     from source
+),
+filter_gq as (
+    select *
+    from filter_columns as trips
+    left join {{ ref('stg_abm3_households') }} as households
+    on trips.household_id = households.household_id
+    where {{ include_gq_where('unittype') }}  -- -> will be "unittype = 0" if include_gq is false
 )
 select *
-from filter_columns
+from filter_gq
