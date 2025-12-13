@@ -17,6 +17,13 @@ filter_columns as (
         stop_frequency,
         primary_purpose
     from source
+),
+filter_gq as (
+    select *
+    from filter_columns as tours
+    left join {{ ref('stg_abm3_households') }} as households
+    on tours.household_id = households.household_id
+    where {{ include_gq_where('unittype') }}  -- -> will be "unittype = 0" if include_gq is false
 )
 select *
-from filter_columns
+from filter_gq
