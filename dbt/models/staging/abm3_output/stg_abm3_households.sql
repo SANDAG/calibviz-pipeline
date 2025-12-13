@@ -10,6 +10,11 @@ filter_columns as (
     unittype,
     num_adults
   from source
+),
+filter_gq as (
+  select * 
+  from filter_columns
+  where {{ include_gq_where('unittype') }}  -- -> will be "unittype = 0" if include_gq is false
 )
 select *
-from filter_columns
+from filter_gq

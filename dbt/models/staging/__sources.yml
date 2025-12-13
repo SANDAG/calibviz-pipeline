@@ -24,6 +24,10 @@ sources:
       - name: tripModeProfile_vis
       - name: transponder_ownership
       - name: tmodeProfile_vis
+      - name: wfh_summary 
+      - name: telecommute_frequency
+      - name: districtFlows
+      - name: externalFrequency
   - name: abm3_airport_output
     meta: 
       external_location: 'T:/STORAGE-63T/2025RP_final/2022/output/airport.SAN/{name}.csv'
