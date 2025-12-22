@@ -12,7 +12,10 @@ filter_columns as (
         work_from_home,
         telecommute_frequency,
         is_out_of_home_worker,
-        is_external_worker
+        is_external_worker,
+        transit_pass_subsidy,
+        transit_pass_ownership,
+        free_parking_at_work
     from source
 ),
 filter_gq as (
