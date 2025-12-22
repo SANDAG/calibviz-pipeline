@@ -15,7 +15,8 @@ filter_columns as (
         is_external_worker,
         transit_pass_subsidy,
         transit_pass_ownership,
-        free_parking_at_work
+        free_parking_at_work,
+        cdap_activity
     from source
 ),
 filter_gq as (
