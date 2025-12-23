@@ -20,7 +20,8 @@ filter_columns as (
         transit_pass_ownership,
         free_parking_at_work,
         cdap_activity,
-        mandatory_tour_frequency
+        mandatory_tour_frequency,
+        non_mandatory_tour_frequency
     from source
 ),
 

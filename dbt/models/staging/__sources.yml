@@ -32,6 +32,7 @@ sources:
       - name: ownership_subsidies
       - name: dapSummary_vis
       - name: mtfSummary_vis
+      - name: inmSummary_vis
   - name: abm3_airport_output
     meta: 
       external_location: 'T:/STORAGE-63T/2025RP_final/2022/output/airport.SAN/{name}.csv'
