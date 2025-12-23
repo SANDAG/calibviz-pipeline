@@ -16,7 +16,8 @@ filter_columns as (
         transit_pass_subsidy,
         transit_pass_ownership,
         free_parking_at_work,
-        cdap_activity
+        cdap_activity,
+        mandatory_tour_frequency
     from source
 ),
 filter_gq as (

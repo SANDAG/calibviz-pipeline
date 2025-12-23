@@ -1,6 +1,7 @@
 import streamlit as st
 import sys
 import plotly.graph_objects as go
+import pandas as pd
 
 sys.path.append('..')
 
@@ -9,16 +10,16 @@ from database import (
     display_connection_status
 )
 
-st.set_page_config(page_title="Daily Activity Pattern Distribution", layout="wide")
+st.set_page_config(page_title="Mandatory Tour Frequency Distribution", layout="wide")
 
-st.title("Daily Activity Pattern")
+st.title("Mandatory Tour Frequency")
 
 display_connection_status()
 
 # Query and display data
 conn = get_db_connection()
 
-df = conn.execute("SELECT person_type, activity_pattern, abm_count, hts_count FROM calibration_metrics.daily_activity_pattern").fetch_df()
+df = conn.execute("SELECT person_type, mtf_choice, abm_count, hts_count FROM calibration_metrics.mandatory_tour_frequency").fetch_df()
 
 # prepare person type filter list
 person_type_list = sorted(df['person_type'].unique().tolist())
@@ -27,36 +28,39 @@ selected_person_type = st.radio("Person Type", person_type_list, index=len(perso
 # Filter data based on selected person type
 df_filtered = df.copy()
 df_display = df_filtered[df_filtered['person_type'] == selected_person_type]
+df_display = df_display[df_display['abm_count'] + df_display['hts_count'] > 0]
 
 total_abm = df_display['abm_count'].sum()
 total_hts = df_display['hts_count'].sum()
 
 df_display['abm_percentage'] = df_display['abm_count'] * 100 / total_abm if total_abm > 0 else 0
 df_display['hts_percentage'] = df_display['hts_count'] * 100 / total_hts if total_hts > 0 else 0
-df_display = df_display[['activity_pattern', 'hts_percentage', 'abm_percentage']]
-df_display = df_display.sort_values(by='activity_pattern')
+df_display = df_display[['mtf_choice', 'hts_percentage', 'abm_percentage']]
+custom_order = ['1 Work', '2+ Work', '1 School', '2+ School', '1 Work & 1 School']
+df_display['mtf_choice'] = pd.Categorical(df_display['mtf_choice'], categories=custom_order, ordered=True)
+df_display = df_display.sort_values('mtf_choice')
 
 fig = go.Figure()
 
 # Add HTS bars
 fig.add_trace(go.Bar(
     name='HTS',
-    x=df_display['activity_pattern'],
+    x=df_display['mtf_choice'],
     y=df_display['hts_percentage'],
-    hovertemplate='Activity Pattern: %{x}<br>HTS: %{y:.1f}%<extra></extra>'
+    hovertemplate='MTF Choice: %{x}<br>HTS: %{y:.1f}%<extra></extra>'
 ))
 
 # Add ABM bars
 fig.add_trace(go.Bar(
     name='ABM',
-    x=df_display['activity_pattern'],
+    x=df_display['mtf_choice'],
     y=df_display['abm_percentage'],
-    hovertemplate='Activity Pattern: %{x}<br>ABM: %{y:.1f}%<extra></extra>'
+    hovertemplate='MTF Choice: %{x}<br>ABM: %{y:.1f}%<extra></extra>'
 ))
 
 fig.update_layout(
     barmode='group',
-    xaxis_title='Activity Pattern',
+    xaxis_title='MTF Choice',
     yaxis_title='Percentage',
     yaxis_ticksuffix='%'
 )
