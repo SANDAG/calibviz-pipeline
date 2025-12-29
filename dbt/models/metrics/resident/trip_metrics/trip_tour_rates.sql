@@ -2,12 +2,14 @@
 -- Rates: trips per household, trips per person, tours per person, stops per person
 -- Compares ABM3 model outputs with HTS survey data
 
+-- Count of households in ABM data
 with abm_households_cte as (
     select 
         count(distinct household_id) as abm_households
     from {{ ref('stg_abm3_households') }}
 ),
 
+-- Count of persons in ABM data
 abm_population_cte as (
     select
         count(distinct p.person_id) as abm_population
@@ -16,6 +18,7 @@ abm_population_cte as (
     on p.household_id = h.household_id
 ),
 
+-- Count of tours in ABM data
 abm_tours_cte as (
     select
         count(distinct t.tour_id) as abm_tours
@@ -24,6 +27,7 @@ abm_tours_cte as (
     on t.household_id = h.household_id
 ),
 
+-- Sum of weighted trips in ABM data
 abm_trips_cte as (
     select
         sum(tr.weight_person_trip) as abm_trips
@@ -32,6 +36,8 @@ abm_trips_cte as (
     on tr.household_id = h.household_id
 ),
 
+-- Calculate stops from tour stop_frequency field
+-- Format is "Xout_Yin" where X is outbound stops and Y is inbound stops
 abm_stops_cte as (
     select
         sum(
@@ -43,6 +49,7 @@ abm_stops_cte as (
     on t.household_id = h.household_id
 ),
 
+-- Extract HTS totals from survey data
 hts_totals_cte as (
     select 
         max(case when Variable = 'Households' then value else 0 end) as hts_households,
@@ -53,6 +60,8 @@ hts_totals_cte as (
     from {{ ref('stg_hts_totals') }}
 ),
 
+-- Calculate rate metrics by dividing totals by base population
+-- ABM values are scaled by sample_rate before calculating rates
 rate_calculations as (
     -- Trips per Household
     select 
