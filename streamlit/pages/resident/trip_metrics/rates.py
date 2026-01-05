@@ -39,7 +39,7 @@ fig.add_trace(go.Bar(
     name='HTS',
     x=df['metric'],
     y=df['hts_value'],
-    marker_color='rgb(40,60,117)',  # Blue color
+    #marker_color='rgb(40,60,117)',  # Blue color
     text=df['hts_value'].round(2),
     textposition='outside',
     hovertemplate='%{x}<br>HTS: %{y:.2f}<extra></extra>'
@@ -50,7 +50,7 @@ fig.add_trace(go.Bar(
     name='ABM',
     x=df['metric'],
     y=df['abm_value'],
-    marker_color='rgb(138,28,97)',  # Purple-red color
+    #marker_color='rgb(138,28,97)',  # Purple-red color
     text=df['abm_value'].round(2),
     textposition='outside',
     hovertemplate='%{x}<br>ABM: %{y:.2f}<extra></extra>'
