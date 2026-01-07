@@ -21,7 +21,8 @@ filter_columns as (
         free_parking_at_work,
         cdap_activity,
         mandatory_tour_frequency,
-        non_mandatory_tour_frequency
+        non_mandatory_tour_frequency,
+        num_non_mand
     from source
 ),
 
