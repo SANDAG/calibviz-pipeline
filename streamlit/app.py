@@ -16,6 +16,7 @@ pages = {
     "Resident - Person Metrics": [st.Page("pages/resident/person_metrics/daily_activity_pattern.py"),
                                   st.Page("pages/resident/person_metrics/mandatory_tour_frequency.py"),
                                   st.Page("pages/resident/person_metrics/non_mandatory_tour_frequency.py")],
+    "Resident - Person Metrics": [],
     "Resident - Work Location Metrics": [st.Page("pages/resident/work_metrics/work_from_home.py"), 
                                          st.Page("pages/resident/work_metrics/telecommute_frequency.py"),
                                          st.Page("pages/resident/work_metrics/district_flows.py"), 

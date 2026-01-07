@@ -1,26 +1,27 @@
 with abm3_source as (
-    select person_type,
-        SUM(CASE WHEN free_parking_at_work THEN 1 ELSE 0 END) / COUNT(*) as proportion
-    from {{ ref('stg_abm3_persons') }} as p
-    left join {{ ref('ptype_mapping') }} as m
-    on p.ptype = m.ptype
-    where p.ptype in (1, 2, 3, 6) 
+    select
+        person_type,
+        SUM(free_parking_weight) as validated
+    from {{ ref('int_ownership_subsidy') }}
+    where daily_parking_expenditure > 0 and (is_student or is_worker)
     group by person_type
     order by person_type
 ),
 
 hts_source as (
-    select PERTYPE as person_type, free_parking_at_work as proportion
-    FROM {{ ref('stg_hts_ownershipSubsidies') }}
+    select
+        pertype as person_type,
+        free_parking_at_work as proportion
+    from {{ ref('stg_hts_ownershipSubsidies') }}
 ),
 
 hts_abm3_joined as (
-    select 
-        a.person_type, 
-        a.proportion as abm_proportion, 
+    select
+        a.person_type,
+        a.validated as abm_proportion,
         h.proportion as hts_proportion
-    from abm3_source a
-    join hts_source h on a.person_type = h.person_type
+    from abm3_source as a
+    inner join hts_source as h on a.person_type = h.person_type
 )
 
 select * from hts_abm3_joined
