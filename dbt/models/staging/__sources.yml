@@ -2,12 +2,13 @@ sources:
   - name: abm3_resident_output
     meta:
       external_location: '../data/abm3/{name}.csv'
-      # external_location: 'T:/STORAGE-63T/2025RP_draft/abm_runs_v2/2022_S0_v2/output/resident/{name}.csv'
+      #external_location: 'T:/STORAGE-63T/2025RP_draft/abm_runs_v2/2022_S0_v2/output/resident/{name}.csv'
     tables:
       - name: final_trips
       - name: final_households
       - name: final_persons
       - name: final_tours
+      - name: final_land_use
   - name: general_survey
     meta:
       external_location: '../local_data/{name}.csv'
@@ -28,6 +29,7 @@ sources:
       - name: telecommute_frequency
       - name: districtFlows
       - name: externalFrequency
+      - name: ownership_subsidies
   - name: abm3_airport_output
     meta: 
       external_location: 'T:/STORAGE-63T/2025RP_final/2022/output/airport.SAN/{name}.csv'
