@@ -18,7 +18,11 @@ filter_columns as (
         is_external_worker,
         transit_pass_subsidy,
         transit_pass_ownership,
-        free_parking_at_work
+        free_parking_at_work,
+        cdap_activity,
+        mandatory_tour_frequency,
+        non_mandatory_tour_frequency,
+        num_non_mand
     from source
 ),
 

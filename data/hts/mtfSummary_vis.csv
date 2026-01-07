@@ -4,28 +4,28 @@ PERTYPE,imf_choice,freq
 3: University Student,1 Work,8820.559281
 6: Driving Aged Student,1 Work,0
 7: Non-Driving Aged Student,1 Work,0
-8: Child To Young for School,1 Work,0
+8: Child too young for School,1 Work,0
 1: Full-Time Worker,2+ Work,22482.71535
 2: Part-Time Worker,2+ Work,775.9481698
 3: University Student,2+ Work,3968.667512
 6: Driving Aged Student,2+ Work,0
 7: Non-Driving Aged Student,2+ Work,0
-8: Child To Young for School,2+ Work,0
+8: Child too young for School,2+ Work,0
 1: Full-Time Worker,1 School,0
 2: Part-Time Worker,1 School,0
 3: University Student,1 School,53256.94246
 6: Driving Aged Student,1 School,26210.24453
 7: Non-Driving Aged Student,1 School,198437.591
-8: Child To Young for School,1 School,47521.71541
+8: Child too young for School,1 School,47521.71541
 1: Full-Time Worker,2+ School,0
 2: Part-Time Worker,2+ School,0
 3: University Student,2+ School,1527.511865
 6: Driving Aged Student,2+ School,2284.450585
 7: Non-Driving Aged Student,2+ School,36392.72976
-8: Child To Young for School,2+ School,10336.53437
+8: Child too young for School,2+ School,10336.53437
 1: Full-Time Worker,1 Work & 1 School,0
 2: Part-Time Worker,1 Work & 1 School,0
 3: University Student,1 Work & 1 School,5770.725043
 6: Driving Aged Student,1 Work & 1 School,118.514821
 7: Non-Driving Aged Student,1 Work & 1 School,0
-8: Child To Young for School,1 Work & 1 School,0
+8: Child too young for School,1 Work & 1 School,0
