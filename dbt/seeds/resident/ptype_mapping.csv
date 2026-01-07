@@ -1,0 +1,9 @@
+﻿ptype,person_type
+1,1: Full-Time Worker
+2,2: Part-Time Worker
+3,3: University Student
+4,4: Non-Worker
+5,5: Retiree
+6,6: Driving Aged Student
+7,7: Non-Driving Aged Student
+8,8: Child too young for School
