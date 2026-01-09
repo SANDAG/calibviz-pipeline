@@ -7,7 +7,7 @@ filter_columns as (
         tour_id,
         household_id,
         trip_mode,
-        purpose,
+        purpose, -- destination purpose
         primary_purpose,
         trip_period,
         origin,
@@ -16,7 +16,8 @@ filter_columns as (
         dtaz,
         distance_drive,
         weight_trip,
-        weight_person_trip
+        weight_person_trip,
+        inbound
     from source
 ),
 filter_gq as (
