@@ -40,6 +40,10 @@ models:
       +materialized: table
       +schema: metrics
       +tags: ['metrics']
+    intermediate:
+      +materialized: table
+      +schema: intermediate
+      +tags: ['intermediate']
 seeds:
   calibviz_pipeline:
       +schema: seeds
