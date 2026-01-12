@@ -5,14 +5,14 @@ with abm_metrics as (
     select
         'ABM' as data_source,
         (
-            select count(distinct household_id)
+            select count(distinct household_id) / {{ var('sample_rate', 1.0) }}
             from {{ ref('stg_abm3_households') }}
         ) as households,
-        (select count(distinct person_id) from {{ ref('stg_abm3_persons') }}
+        (select count(distinct person_id) / {{ var('sample_rate', 1.0) }} from {{ ref('stg_abm3_persons') }}
         ) as population,
-        (select sum(number_of_participants) from {{ ref('stg_abm3_tours') }}
+        (select sum(number_of_participants) / {{ var('sample_rate', 1.0) }} from {{ ref('stg_abm3_tours') }}
         ) as tours,
-        (select sum(weight_person_trip) from {{ ref('stg_abm3_trips') }}
+        (select sum(weight_person_trip) / {{ var('sample_rate', 1.0) }} from {{ ref('stg_abm3_trips') }}
         ) as trips,
         (select sum(
             (
@@ -20,9 +20,9 @@ with abm_metrics as (
                 + cast(substring(stop_frequency, 6, 1) as integer)
             )
             * number_of_participants
-        ) from {{ ref('stg_abm3_tours') }}) as stops,
+        ) / {{ var('sample_rate', 1.0) }} from {{ ref('stg_abm3_tours') }}) as stops,
         (
-            select sum(distance_drive * weight_trip)
+            select sum(distance_drive * weight_trip) / {{ var('sample_rate', 1.0) }}
             from {{ ref('stg_abm3_trips') }}
         ) as vmt
 ),
