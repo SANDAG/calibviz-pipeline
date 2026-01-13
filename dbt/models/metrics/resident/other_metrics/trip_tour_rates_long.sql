@@ -43,8 +43,8 @@ stops as (
 
 select
     'Trips per Household' as variables,
-    trips.hts_trips / households.hts_households as hts,
-    trips.abm_trips / households.abm_households as abm
+    round(trips.hts_trips / households.hts_households, 2) as hts,
+    round(trips.abm_trips / households.abm_households, 2) as abm
 from trips
 cross join households
 
@@ -52,8 +52,8 @@ union all
 
 select
     'Trips per Person',
-    trips.hts_trips / population.hts_population,
-    trips.abm_trips / population.abm_population
+    round(trips.hts_trips / population.hts_population, 2) as hts,
+    round(trips.abm_trips / population.abm_population, 2) as abm
 from trips
 cross join population
 
@@ -61,8 +61,8 @@ union all
 
 select
     'Tours per Person',
-    tours.hts_tours / population.hts_population,
-    tours.abm_tours / population.abm_population
+    round(tours.hts_tours / population.hts_population, 2) as hts,
+    round(tours.abm_tours / population.abm_population, 2) as abm
 from tours
 cross join population
 
@@ -70,7 +70,7 @@ union all
 
 select
     'Stops per Person',
-    stops.hts_stops / population.hts_population,
-    stops.abm_stops / population.abm_population
+    round(stops.hts_stops / population.hts_population, 2) as hts,
+    round(stops.abm_stops / population.abm_population, 2) as abm
 from stops
 cross join population
