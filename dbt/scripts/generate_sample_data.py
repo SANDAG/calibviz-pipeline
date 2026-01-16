@@ -4,7 +4,8 @@ def load_model_outputs(model_output_path, sample_size=12000):
     """
     Load model output CSV files with appropriate data types.
     
-    Reads a sample of trips and full datasets for tours, persons, households and land_use.
+    Reads a sample of trips and full datasets for tours, persons, households.
+    For land_use, reads only a subset of columns: zone_id, mgra, pop, hhp, hh, hhs, emp_total, pseudomsa, exp_daily, TAZ.
     
     Args:
         model_output_path: Directory path containing the model output files
@@ -33,14 +34,14 @@ def load_model_outputs(model_output_path, sample_size=12000):
     )
     print(f"  Trip Sample: {len(sample_trips):,}")
 
-    # Load full tours, persons, households, and land use files
+    # Load full tours, persons, households, and subset of land use columns
     tours = pd.read_csv(f'{model_output_path}\\final_tours.csv', dtype=tours_dtypes)
     print(f"  Tours: {len(tours):,}")
     persons = pd.read_csv(f'{model_output_path}\\final_persons.csv')
     print(f"  Persons: {len(persons):,}")
     households = pd.read_csv(f'{model_output_path}\\final_households.csv')
     print(f"  Households: {len(households):,}")
-    land_use = pd.read_csv(f'{model_output_path}\\final_land_use.csv')
+    land_use = pd.read_csv(f'{model_output_path}\\final_land_use.csv', usecols=['zone_id', 'mgra', 'pop', 'hhp', 'hh', 'hhs', 'emp_total', 'pseudomsa', 'exp_daily', 'TAZ'])
     print(f"  Land Use: {len(land_use):,}\n")
     
     return sample_trips, tours, persons, households, land_use
@@ -124,7 +125,8 @@ if __name__ == "__main__":
             "model_output_path is not set. Please provide the path to the model output directory."
         )
 
-    # Load model outputs (sample of trips, full tours/persons/households/land_use)
+    # Load model outputs (sample of trips, full tours/persons/households, and land_use with selected columns)
+
     sample_trips, tours, persons, households, land_use = load_model_outputs(
         model_output_path, sample_size=12000
     )
