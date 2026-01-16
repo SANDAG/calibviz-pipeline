@@ -1,8 +1,11 @@
 ### To start using DBT:
 
-Run the following commands:
- - ```dbt build``` (to build the entirety of all models (metrics, staging models, intermediate))
+Run the following commands for resident metrics:
+ - ```dbt run --select +metrics.resident+ ```
  - ```dbt run --select (name of model)``` (to build/run only one model)
+   - e.g. ```dbt run --select trip_mode```
+- ```dbt run --select +(name of model)``` (to include upstream dependencies)
+   - e.g. ```dbt run --select +trip_mode```
 
 Tips:
  - Secrets can be added with your profiles.yml file (this is for when trying to connect to a cloud source/protected source).
