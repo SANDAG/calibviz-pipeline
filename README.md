@@ -28,10 +28,13 @@ If the initial setup is completed, follow these steps to run the resident calibr
 # 2. Navigate to dbt directory
 cd dbt
 
-# 3. Run resident metrics model only
+# 3. Load csv files, e.g., mode mapping (only need to run once or when seed data changes)
+dbt seed
+
+# 4. Run resident metrics model only
 dbt run --select +metrics.resident+
 
-# 4. (Optional) Launch Streamlit dashboard
+# 5. (Optional) Launch Streamlit dashboard
 cd ../streamlit
 streamlit run app.py
 ```
