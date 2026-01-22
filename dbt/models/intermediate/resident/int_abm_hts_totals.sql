@@ -1,44 +1,76 @@
--- Intermediate model that calculates all base metrics for both ABM and HTS
--- This serves as the foundation for multiple downstream mart models
-
-with abm_metrics as (
-    select
-        'ABM' as data_source,
-        (
-            select count(distinct household_id) / {{ var('sample_rate', 1.0) }}
-            from {{ ref('stg_abm3_households') }}
-        ) as households,
-        (select count(distinct person_id) / {{ var('sample_rate', 1.0) }} from {{ ref('stg_abm3_persons') }}
-        ) as population,
-        (select sum(number_of_participants) / {{ var('sample_rate', 1.0) }} from {{ ref('stg_abm3_tours') }}
-        ) as tours,
-        (select sum(weight_person_trip) / {{ var('sample_rate', 1.0) }} from {{ ref('stg_abm3_trips') }}
-        ) as trips,
-        (select sum(
+WITH tours AS (
+    SELECT
+        'ABM' AS source,
+        SUM(
             (
-                cast(substring(stop_frequency, 1, 1) as integer)
-                + cast(substring(stop_frequency, 6, 1) as integer)
-            )
-            * number_of_participants
-        ) / {{ var('sample_rate', 1.0) }} from {{ ref('stg_abm3_tours') }}) as stops,
-        (
-            select sum(distance_drive * weight_trip) / {{ var('sample_rate', 1.0) }}
-            from {{ ref('stg_abm3_trips') }}
-        ) as vmt
+                CAST(SUBSTRING(stop_frequency, 1, 1) AS INTEGER)
+                + CAST(SUBSTRING(stop_frequency, 6, 1) AS INTEGER)
+            ) * number_of_participants
+        ) AS total_stops,
+        SUM(number_of_participants) AS total_participants
+    FROM {{ ref('stg_abm3_tours') }}
 ),
 
-hts_metrics as (
-    select
-        'HTS' as data_source,
-        max(case when variable = 'Households' then value end) as households,
-        max(case when variable = 'Population' then value end) as population,
-        max(case when variable = 'Tours' then value end) as tours,
-        max(case when variable = 'Trips' then value end) as trips,
-        max(case when variable = 'Stops' then value end) as stops,
-        max(case when variable = 'VMT' then value end) as vmt
-    from {{ ref('stg_hts_totals') }}
+trips AS (
+    SELECT
+        'ABM' AS source,
+        SUM(distance_drive * weight_trip) AS vmt,
+        SUM(weight_person_trip) AS trips
+    FROM {{ ref('stg_abm3_trips') }}
+),
+
+households AS (
+    SELECT
+        'ABM' AS source,
+        COUNT(DISTINCT household_id) AS households
+    FROM {{ ref('stg_abm3_households') }}
+),
+
+persons AS (
+    SELECT
+        'ABM' AS source,
+        COUNT(DISTINCT person_id) AS population
+    FROM {{ ref('stg_abm3_persons') }}
+),
+
+abm AS (
+    SELECT
+        t.source,
+        t.total_stops,
+        t.total_participants,
+        tr.vmt,
+        tr.trips,
+        h.households,
+        p.population
+    FROM tours AS t
+    CROSS JOIN trips AS tr
+    CROSS JOIN households AS h
+    CROSS JOIN persons AS p
+),
+
+hts AS (
+    SELECT
+        'HTS' AS source,
+        stops AS total_stops,
+        tours AS total_participants,
+        vmt,
+        trips,
+        households,
+        population
+    FROM {{ ref('stg_hts_totals') }}
+        PIVOT (
+            MAX(value)
+            FOR variable IN (
+                'Stops',
+                'Tours',
+                'VMT',
+                'Trips',
+                'Households',
+                'Population'
+            )
+        )
 )
 
-select * from abm_metrics
-union all
-select * from hts_metrics
+SELECT * FROM abm
+UNION ALL
+SELECT * FROM hts
