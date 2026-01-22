@@ -4,13 +4,13 @@
 with abm_metrics as (
     select *
     from {{ ref('int_abm_hts_totals') }}
-    where data_source = 'ABM'
+    where source = 'ABM'
 ),
 
 hts_metrics as (
     select *
     from {{ ref('int_abm_hts_totals') }}
-    where data_source = 'HTS'
+    where source = 'HTS'
 )
 
 select
@@ -31,10 +31,11 @@ cross join abm_metrics as a
 
 union all
 
+-- Tours per Person uses total_participants as proxy for total tours
 select
     'Tours per Person' as metric,
-    round(h.tours / h.population, 2) as hts_value,
-    round(a.tours / a.population, 2) as abm_value
+    round(h.total_participants / h.population, 2) as hts_value,
+    round(a.total_participants / a.population, 2) as abm_value
 from hts_metrics as h
 cross join abm_metrics as a
 
@@ -42,7 +43,7 @@ union all
 
 select
     'Stops per Person' as metric,
-    round(h.stops / h.population, 2) as hts_value,
-    round(a.stops / a.population, 2) as abm_value
+    round(h.total_stops / h.population, 2) as hts_value,
+    round(a.total_stops / a.population, 2) as abm_value
 from hts_metrics as h
 cross join abm_metrics as a
