@@ -1,5 +1,6 @@
-with source as (SELECT * FROM {{ source('hts', 'transponder_ownership') }})
+with source as (select * from {{ source('hts', 'transponder_ownership') }})
 
-SELECT 
-  *
-FROM source
+select
+    index as transponder,
+    share
+from source
