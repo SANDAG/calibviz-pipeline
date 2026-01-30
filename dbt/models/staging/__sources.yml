@@ -46,3 +46,5 @@ sources:
     tables:
       - name: tour_mc_targets_final_disagg
       - name: trip_mc_targets_final_disagg
+      - name: tourmodeProfile_vis_calib
+      - name: tripmodeProfile_vis_calib

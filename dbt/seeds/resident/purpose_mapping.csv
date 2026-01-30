@@ -9,3 +9,7 @@ eatout,6: Individual Discretionary
 social,7: Joint Maintenance
 othdiscr,8: Joint Discretionary
 atwork,9: Work-based
+jmain,7: Joint Maintenance
+imain,5: Individual Maintenance
+jdisc,8: Joint Discretionary
+idisc,6: Individual Discretionary
