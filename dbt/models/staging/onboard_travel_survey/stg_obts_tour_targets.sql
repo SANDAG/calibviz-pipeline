@@ -1,22 +1,14 @@
 with base as (
     select *
-    from {{ source('onboard_transit_survey', 'tour_mc_targets_final_disagg') }}
+    from {{ source('onboard_transit_survey', 'tourmodeProfile_vis_calib') }}
 )
 
 select
-    *,
+    base.*,
+    m.mode as tour_mode,
     case
-        when grouped_tour_mode = 'TNC-REG' then 'TNC_SINGLE'
-        else grouped_tour_mode
-    end as tour_mode_remapped,
-    case
-        when purpose = 'Work sub-tour' then 'AtWork'
-        else purpose
-    end as tour_purpose_remapped,
-    case
-        when auto_suff = '0' then 'zeroautohh'
-        when auto_suff = '1' then 'autodeficienthh'
-        when auto_suff = '2' then 'autosufficienthh'
-        else auto_suff
-    end as auto_suff_mapped
+        when base.purpose = 'sch' then 'school'
+        else base.purpose
+    end as tour_purpose_mapped
 from base
+left join {{ ref('obts_mode_mapping') }} as m on base.id = m.mode_id
