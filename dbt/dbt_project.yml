@@ -59,3 +59,4 @@ vars:
   base_path: "T:/STORAGE-63T/2025RP_draft/abm_runs_v2/"
   include_gq: false  # set to true to include GQ households, false to filter them out
   sample_rate: 1.0   # set to 1.0 for full sample, 0.1 for 10% sample, etc.
+  survey_name: "obts"
