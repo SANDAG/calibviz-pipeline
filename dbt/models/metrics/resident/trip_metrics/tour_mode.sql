@@ -6,7 +6,11 @@ with abm3_temp as (
             else '1: 1+ Veh/Adults > Veh'
         end as veh_ownership_category,
         coalesce(m.mode_hts, t.tour_mode) as tour_mode,
-        coalesce(p.purpose_hts, t.primary_purpose) as purpose
+        t.tour_category,  -- ADD THIS LINE
+        case
+            when t.tour_category = 'joint' then coalesce(p.joint_category, t.primary_purpose)
+            else coalesce(p.individual_category, t.primary_purpose)
+        end as purpose
     from {{ ref('stg_abm3_tours') }} as t
     left join {{ ref('mode_mapping') }} as m
         on t.tour_mode = m.mode_abm3
@@ -48,7 +52,7 @@ survey_abm3_tour_mode_joined as (
         coalesce(s.abm_tours, 0) as abm_tours,
         coalesce(h.survey_tours, 0) as survey_tours
     from abm3_source as s
-    full join survey_source as h
+    inner join survey_source as h
         on
             s.tour_mode = h.tour_mode
             and s.purpose = h.purpose

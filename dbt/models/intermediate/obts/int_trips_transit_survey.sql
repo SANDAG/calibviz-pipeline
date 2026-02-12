@@ -7,7 +7,7 @@ select
     trips_data.trip_mode,
     trips_data.value,
     trips_data.tour_mode,
-    coalesce(purpose_map.purpose_hts, trips_data.purpose)
+    coalesce(purpose_map.individual_category, trips_data.purpose)
         as purpose,
     trips_data.value
     / sum(trips_data.value)

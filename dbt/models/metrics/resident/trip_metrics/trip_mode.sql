@@ -2,7 +2,7 @@ with abm3_temp as (
     select 
         coalesce(m1.mode_hts, trips.trip_mode) as trip_mode,
         coalesce(m2.mode_hts, tours.tour_mode) as tour_mode,
-        coalesce(purp.purpose_hts, tours.primary_purpose) as tour_purpose,
+        coalesce(purp.individual_category, tours.primary_purpose) as tour_purpose,
         trips.weight_person_trip
     from {{ ref('stg_abm3_trips') }} as trips
     left join {{ ref('mode_mapping') }} as m1
