@@ -5,7 +5,9 @@ with tours_data as (
         tour_targets.freq_as1,
         tour_targets.freq_as2,
         tour_targets.freq_all,
-        coalesce(purpose_map.purpose_hts, tour_targets.tour_purpose_mapped)
+        coalesce(
+            purpose_map.individual_category, tour_targets.tour_purpose_mapped
+        )
             as tour_purpose_mapped
     from {{ ref('stg_obts_tour_targets') }} as tour_targets
     left join
