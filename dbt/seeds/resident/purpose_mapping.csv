@@ -6,7 +6,7 @@ escort,4: Escort,
 shopping,5: Individual Maintenance,7: Joint Maintenance
 othmaint,5: Individual Maintenance,7: Joint Maintenance
 eatout,6: Individual Discretionary,8: Joint Discretionary
-social,6: Individual Discretionary,7: Joint Maintenance
+social,6: Individual Discretionary,7: Joint Discretionary
 othdiscr,6: Individual Discretionary,8: Joint Discretionary
 atwork,9: Work-based,
 jmain,7: Joint Maintenance,
