@@ -15,6 +15,8 @@ filter_columns as (
         otaz,
         dtaz,
         distance_drive,
+        distance_total,
+        time_total,
         weight_trip,
         weight_person_trip,
         inbound

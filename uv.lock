@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.13"
 
 [[package]]
@@ -195,6 +195,7 @@ dependencies = [
     { name = "pandas" },
     { name = "plotly" },
     { name = "polars" },
+    { name = "pydeck" },
     { name = "streamlit" },
 ]
 
@@ -212,6 +213,7 @@ requires-dist = [
     { name = "pandas", specifier = ">=2.3.3" },
     { name = "plotly", specifier = ">=6.3.1" },
     { name = "polars", specifier = ">=1.36.1" },
+    { name = "pydeck", specifier = ">=0.9.1" },
     { name = "streamlit", specifier = ">=1.50.0" },
 ]
 
