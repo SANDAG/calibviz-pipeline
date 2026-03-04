@@ -32,24 +32,56 @@ tour_purposes_list = sorted(
 # Initialize selected lists
 selected_trip_modes = []
 selected_tour_modes = []
-selected_purposes = []
+selected_tour_purposes = []
+
+# Initialize checkboxes in session state
+if "trip_mode_initialized" not in st.session_state:
+    st.session_state.trip_mode_initialized = True
+    for mode in tour_modes_list:
+        st.session_state[f"m_{mode}"] = True
+    for trip_mode in trip_modes_list:
+        st.session_state[f"t_{trip_mode}"] = True
+    for purp in tour_purposes_list:
+        st.session_state[f"p_{purp}"] = True
 
 # === FILTERS SECTION (Collapsible at top) ===
 with st.expander("🔍 Filters", expanded=False):
-    # Trip Mode Filter
-    selected_trip_modes = st.multiselect(
-        "Trip Mode", options=trip_modes_list, default=trip_modes_list
-    )
+    if st.button("🔄 Reset Filters", use_container_width=False):
+        for mode in tour_modes_list:
+            st.session_state[f"m_{mode}"] = True
+
+        for trip_mode in trip_modes_list:
+            st.session_state[f"t_{trip_mode}"] = True
+
+        for purp in tour_purposes_list:
+            st.session_state[f"p_{purp}"] = True
+
+        st.rerun()
+
+    st.divider()
+
+    filter_cols = st.columns(3)
 
     # Tour Mode Filter
-    selected_tour_modes = st.multiselect(
-        "Tour Mode", options=tour_modes_list, default=tour_modes_list
-    )
+    with filter_cols[0]:
+        st.markdown("**Tour Mode**")
+        for mode in tour_modes_list:
+            if st.checkbox(mode, key=f"m_{mode}"):
+                selected_tour_modes.append(mode)
+
+    # Trip Mode Filter
+    with filter_cols[1]:
+        st.markdown("**Trip Mode**")
+        for trip_mode in trip_modes_list:
+            if st.checkbox(trip_mode, key=f"t_{trip_mode}"):
+                selected_trip_modes.append(trip_mode)
 
     # Purpose Filter
-    selected_purposes = st.multiselect(
-        "Tour Purpose", options=tour_purposes_list, default=tour_purposes_list
-    )
+    with filter_cols[2]:
+        st.markdown("**Tour Purpose**")
+        for purp in tour_purposes_list:
+            if st.checkbox(purp, key=f"p_{purp}"):
+                selected_tour_purposes.append(purp)
 
 # Apply filters
 df_filtered = df.copy()
@@ -57,8 +89,8 @@ if selected_trip_modes:
     df_filtered = df_filtered[df_filtered["trip_mode"].isin(selected_trip_modes)]
 if selected_tour_modes:
     df_filtered = df_filtered[df_filtered["tour_mode"].isin(selected_tour_modes)]
-if selected_purposes:
-    df_filtered = df_filtered[df_filtered["tour_purpose"].isin(selected_purposes)]
+if selected_tour_purposes:
+    df_filtered = df_filtered[df_filtered["tour_purpose"].isin(selected_tour_purposes)]
 
 df_filtered = df_filtered.groupby("trip_mode", as_index=False).agg(
     {"abm_trips": "sum", "survey_trips": "sum"}
