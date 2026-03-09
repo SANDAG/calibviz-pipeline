@@ -3,7 +3,6 @@ with source as (
         case 
             when tour_type like 'res_%' then 'resident'
             when tour_type like 'vis_%' then 'visitor'
-            when tour_type like 'emp%' then 'employee'
             else tour_type
         end as tour_type_general
     FROM {{ source('general_survey', 'departing_trips_by_mode') }}

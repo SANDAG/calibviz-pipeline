@@ -65,15 +65,13 @@ df_dimension['source'] = df_dimension['source'].str.replace('_percentage|_trip|_
 # Chart 2: Breakdown by Dimension Value
 st.write(f"### Breakdown by Dimension Value ({y_label})")
 
-dimension_value_order = ['Drop-off/Pick up', 
-                   'UBER/Lyft', 
+dimension_value_order = ['Pickup Dropoff', 
+                   'Ridehail', 
                    'Taxi', 
-                   'Personal Car Parked', 
-                   'Shared Shuttle Van', 
+                   'Drive and Park', 
+                   'Shuttle Van', 
                    'Rental Car', 
-                   'Walk', 
-                   'Public Transportation',
-                   'employee_shuttle']
+                   'Transit']
 
 fig2 = px.bar(
     df_dimension,

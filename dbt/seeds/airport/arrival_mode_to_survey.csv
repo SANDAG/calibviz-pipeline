@@ -1,21 +1,19 @@
 arrival_mode,mapped_value
-CURB_LOC1,drop_off
-HOTEL_COURTESY,shuttle
-KNR_LOC,public_transit
-KNR_MIX,public_transit
-KNR_PRM,public_transit
-PARK_ESCORT,drop_off
-PARK_LOC1,parked_on_site
-PARK_LOC4,parked_off_site
-PARK_LOC5,parked_off_site
-RENTAL,rental_car
-TAXI_LOC1,taxi
-RIDEHAIL_LOC1,tnc
-SHUTTLEVAN,shuttle
-TNC_LOC,public_transit
-TNC_MIX,public_transit
-TNC_PRM,public_transit
-WALK,active_transportation
-WALK_LOC,public_transit
-WALK_MIX,public_transit
-WALK_PRM,public_transit
+CURB_LOC1,Pickup Dropoff
+KNR_LOC,Transit
+KNR_MIX,Transit
+KNR_PRM,Transit
+PARK_ESCORT,Pickup Dropoff
+PARK_LOC1,Drive and Park
+PARK_LOC4,Drive and Park
+PARK_LOC5,Drive and Park
+RENTAL,Rental Car
+TAXI_LOC1,Taxi
+RIDEHAIL_LOC1,Ridehail
+SHUTTLEVAN,Shuttle Van
+TNC_LOC,Transit
+TNC_MIX,Transit
+TNC_PRM,Transit
+WALK_LOC,Transit
+WALK_MIX,Transit
+WALK_PRM,Transit
