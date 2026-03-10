@@ -8,7 +8,7 @@ with abm3_source as (
 
 hts_source as (
     select 
-        case when transponder then 'Yes' else 'No' end as transponder_ownership,  
+        case when index then 'Yes' else 'No' end as transponder_ownership,  
         share as proportion 
     FROM {{ ref('stg_hts_transponderOwnership') }}
 ),

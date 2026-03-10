@@ -1,11 +1,15 @@
-﻿purpose_abm3,purpose_hts
-work,1: Work
-univ,2: University
-school,3: School
-escort,4: Escort
-shopping,5: Individual Maintenance
-othmaint,5: Individual Maintenance
-eatout,6: Individual Discretionary
-social,7: Joint Maintenance
-othdiscr,8: Joint Discretionary
-atwork,9: Work-based
+﻿purpose_abm3,individual_category,joint_category
+work,1: Work,
+univ,2: University,
+school,3: School,
+escort,4: Escort,
+shopping,5: Individual Maintenance,7: Joint Maintenance
+othmaint,5: Individual Maintenance,7: Joint Maintenance
+eatout,6: Individual Discretionary,8: Joint Discretionary
+social,6: Individual Discretionary,8: Joint Discretionary
+othdiscr,6: Individual Discretionary,8: Joint Discretionary
+atwork,9: Work-based,
+jmain,7: Joint Maintenance,
+imain,5: Individual Maintenance,
+jdisc,8: Joint Discretionary,
+idisc,6: Individual Discretionary,

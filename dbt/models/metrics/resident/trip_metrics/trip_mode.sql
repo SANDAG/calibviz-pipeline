@@ -2,7 +2,7 @@ with abm3_temp as (
     select 
         coalesce(m1.mode_hts, trips.trip_mode) as trip_mode,
         coalesce(m2.mode_hts, tours.tour_mode) as tour_mode,
-        coalesce(purp.purpose_hts, tours.primary_purpose) as tour_purpose,
+        coalesce(purp.individual_category, tours.primary_purpose) as tour_purpose,
         trips.weight_person_trip
     from {{ ref('stg_abm3_trips') }} as trips
     left join {{ ref('mode_mapping') }} as m1
@@ -23,26 +23,30 @@ abm3_source as (
     from abm3_temp as t
     group by trip_mode, tour_mode, tour_purpose
 ),
-hts_source as (
+survey_source as (
     select
         trip_mode,
         tour_mode,
         purpose	as tour_purpose, 
-        value as hts_trips
+        value as survey_trips
+    {% if var('survey_name') == 'hts' %}
     from {{ ref('stg_hts_tripMode') }} as t
+    {% else %}
+    from {{ ref('int_trips_transit_survey') }} as t
+    {% endif %}
 ),
-hts_abm3_trip_mode_joined as (
+survey_abm3_trip_mode_joined as (
     select 
         coalesce(s.trip_mode, h.trip_mode) as trip_mode,
         coalesce(s.tour_mode, h.tour_mode) as tour_mode,
         coalesce(s.tour_purpose, h.tour_purpose) as tour_purpose,
         coalesce(s.abm_trips, 0) as abm_trips, 
-        coalesce(h.hts_trips, 0) as hts_trips
+        coalesce(h.survey_trips, 0) as survey_trips
     from abm3_source s
-    full join hts_source h
+    full join survey_source h
     on s.trip_mode = h.trip_mode
     and s.tour_mode = h.tour_mode
     and s.tour_purpose = h.tour_purpose
 )
 
-select * from hts_abm3_trip_mode_joined
+select * from survey_abm3_trip_mode_joined

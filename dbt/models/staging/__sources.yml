@@ -40,3 +40,9 @@ sources:
       - name: final_santrips
       - name: final_santours
 
+  - name: onboard_transit_survey
+    meta:
+      external_location: '../data/transit_survey/{name}.csv'
+    tables:
+      - name: tourmodeProfile_vis_calib
+      - name: tripmodeProfile_vis_calib
