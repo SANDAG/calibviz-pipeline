@@ -2,6 +2,7 @@ import streamlit as st
 import sys
 import plotly.graph_objects as go
 import plotly.express as px
+import pandas as pd
 
 sys.path.append('..')
 
@@ -19,7 +20,21 @@ display_connection_status()
 
 # Query and display data
 conn = get_db_connection()
-df = conn.execute("SELECT * FROM calibration_metrics.tour_share_by_mode").fetch_df()
+df = conn.execute("SELECT * FROM calibration_metrics.tour_share_by_mode WHERE scenario IS NOT NULL").fetch_df()
+
+# Add multi-select for scenarios
+available_scenarios = sorted(df['scenario'].unique())
+scenario_filter = st.multiselect(
+    "Select Scenarios to Compare", 
+    options=available_scenarios,
+    default=available_scenarios
+)
+
+if not scenario_filter:
+    st.warning("Please select at least one scenario")
+    st.stop()
+
+df = df[df['scenario'].isin(scenario_filter)]
 
 # Add filter for dimension
 dimension_filter = st.selectbox("Select Dimension (e.g. type to aggregate by)", options=df['dimension'].unique())
@@ -42,25 +57,50 @@ show_percentage = st.toggle("Show Percentage", value=True)
 
 # Set y-axis columns based on toggle
 if show_percentage:
-    value_vars = ['survey_percentage', 'model_percentage']
     y_label = "Percentage"
     value_col = 'percentage'
 else:
-    value_vars = ['survey_trip', 'model_trip']
     y_label = "Count"
     value_col = 'count'
 
+# Prepare data for visualization
+viz_data = []
+for _, row in filtered_df.iterrows():
+    dimension_value = row['dimension_value']
+    
+    # Add survey data once
+    if show_percentage:
+        viz_data.append({
+            'dimension_value': dimension_value,
+            'source': 'Survey',
+            value_col: row['survey_percentage']
+        })
+    else:
+        viz_data.append({
+            'dimension_value': dimension_value,
+            'source': 'Survey',
+            value_col: row['survey_trip']
+        })
+    
+    # Add model data for this scenario
+    scenario_name = row['scenario']
+    if show_percentage:
+        viz_data.append({
+            'dimension_value': dimension_value,
+            'source': f'Model ({scenario_name})',
+            value_col: row['model_percentage']
+        })
+    else:
+        viz_data.append({
+            'dimension_value': dimension_value,
+            'source': f'Model ({scenario_name})',
+            value_col: row['model_trip']
+        })
 
-df_dimension = filtered_df.melt(
-    id_vars=['dimension_value'],
-    value_vars=value_vars,
-    var_name='source',
-    value_name=value_col
-)
+df_dimension = pd.DataFrame(viz_data)
 
-# Clean up source names to 'Survey' and 'Model'
-#df_tour['source'] = df_tour['source'].str.replace('_percentage|_trip|_count', '', regex=True).str.replace('survey', 'Survey').str.replace('model', 'Model')
-df_dimension['source'] = df_dimension['source'].str.replace('_percentage|_trip|_count', '', regex=True).str.replace('survey', 'Survey').str.replace('model', 'Model')
+# Remove duplicates from survey (it's repeated for each scenario)
+df_dimension = df_dimension.drop_duplicates()
 
 # Chart 2: Breakdown by Dimension Value
 st.write(f"### Breakdown by Dimension Value ({y_label})")
@@ -73,14 +113,17 @@ dimension_value_order = ['Pickup Dropoff',
                    'Rental Car', 
                    'Transit']
 
+# Create source order: Survey first, then all model scenarios
+source_order = ['Survey'] + [f'Model ({s})' for s in sorted(scenario_filter)]
+
 fig2 = px.bar(
     df_dimension,
     x='dimension_value',
     y=value_col,
     color='source',
     barmode='group',
-    category_orders={'source': ['Survey', 'Model'],
-                     'dimension_value': dimension_value_order},  # Fixed order!
+    category_orders={'source': source_order,
+                     'dimension_value': dimension_value_order},
     labels={value_col: y_label, 'dimension_value': 'Dimension Value', 'source': ''}
 )
 
