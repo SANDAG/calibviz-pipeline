@@ -33,9 +33,16 @@ sources:
       - name: dapSummary_vis
       - name: mtfSummary_vis
       - name: inmSummary_vis
-  - name: abm3_airport_output
+#airport model sources
+  - name: 2022_v1542
     meta: 
-      external_location: 'T:/STORAGE-63T/abm3_runs/2022_sdia1541/output/airport.SAN/{name}.csv'
+      external_location: 'T:/STORAGE-63T/ABM3_EMME_upgrade/2022_v1542/output/airport.SAN/{name}.csv'
+    tables:
+      - name: final_santrips
+      - name: final_santours
+  - name: 2022_v1541_sparky
+    meta: 
+      external_location: 'T:/STORAGE-63T/abm3_runs/2022_v1541_sparky/output/airport.SAN/{name}.csv'
     tables:
       - name: final_santrips
       - name: final_santours

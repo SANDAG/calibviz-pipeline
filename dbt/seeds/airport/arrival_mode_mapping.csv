@@ -1,10 +1,13 @@
 original_mode,intermediate_mode,final_mode
 CURB_LOC1,drop_off,Pickup Dropoff
+HOTEL_COURTESY,shuttle,Shuttle Van
 KNR_LOC,public_transit,Transit
 KNR_MIX,public_transit,Transit
 KNR_PRM,public_transit,Transit
+PARK_ESCORT,drop_off,Pickup Dropoff
 PARK_LOC1,parked_on_site,Drive and Park
 PARK_LOC4,parked_off_site,Drive and Park
+PARK_LOC5,parked_off_site,Drive and Park
 RENTAL,rental_car,Rental Car
 TAXI_LOC1,taxi,Taxi
 RIDEHAIL_LOC1,tnc,Ridehail

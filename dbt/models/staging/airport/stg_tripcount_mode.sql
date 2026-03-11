@@ -3,14 +3,11 @@
 ) }}
 
 with trip_source as (
-    SELECT * EXCLUDE (origin),
-           origin as origin_mgra 
-    FROM {{ source('abm3_airport_output', 'final_santrips') }}
+    {{ union_airport_trips() }}
 ),
 
 tour_source as (
-    SELECT tour_id, tour_type 
-    FROM {{ source('abm3_airport_output', 'final_santours') }}
+    {{ union_airport_tours() }}
 ),
 
 mgra_taz_pmsa_xref as (
@@ -38,7 +35,8 @@ origin_pmsa_xref as (
 
 trip_joined_xref as (
     SELECT
-        ts.*,
+        ts.* EXCLUDE (origin_mgra),
+        ts.origin_mgra,
         xref.origin_pmsa,
         pm.pmsa_name as origin_pmsa_name
     FROM trip_source ts
@@ -49,6 +47,7 @@ trip_joined_xref as (
 )
 
 SELECT
+    trip_joined_xref.scenario,
     origin_mgra,
     origin_pmsa_name::VARCHAR as origin_pmsa,
     CASE WHEN arrival_mode = 'TAXI_LOC1' THEN 'TAXI'
@@ -57,18 +56,18 @@ SELECT
          ELSE trip_mode
     END AS
     trip_mode,
-    CASE WHEN tour_type LIKE 'emp' THEN 'emp'
-         WHEN tour_type LIKE 'res_per%' THEN 'res_nb'
-         WHEN tour_type LIKE 'res_bus%' THEN 'res_bus'
-         WHEN tour_type LIKE 'vis_per%' THEN 'vis_nb'
-         WHEN tour_type LIKE 'vis_bus%' THEN 'vis_bus'
-         ELSE tour_type
+    CASE WHEN ts.tour_type LIKE 'emp' THEN 'emp'
+         WHEN ts.tour_type LIKE 'res_per%' THEN 'res_nb'
+         WHEN ts.tour_type LIKE 'res_bus%' THEN 'res_bus'
+         WHEN ts.tour_type LIKE 'vis_per%' THEN 'vis_nb'
+         WHEN ts.tour_type LIKE 'vis_bus%' THEN 'vis_bus'
+         ELSE ts.tour_type
     END AS tour_type,
     case 
-        when tour_type like 'res_%' then 'resident'
-        when tour_type like 'vis_%' then 'visitor'
-        when tour_type like 'emp%' then 'employee'
-        else tour_type
+        when ts.tour_type like 'res_%' then 'resident'
+        when ts.tour_type like 'vis_%' then 'visitor'
+        when ts.tour_type like 'emp%' then 'employee'
+        else ts.tour_type
     end as tour_type_general,
     outbound,
     -- mode mapping
@@ -76,7 +75,9 @@ SELECT
     COALESCE(m.final_mode, trip_joined_xref.arrival_mode) as arrival_mode,
     weight_person_trip as trip
 FROM trip_joined_xref
-JOIN tour_source ts USING (tour_id)
+JOIN tour_source ts 
+    ON trip_joined_xref.tour_id = ts.tour_id 
+    AND trip_joined_xref.scenario = ts.scenario
 LEFT JOIN {{ ref('arrival_mode_mapping') }} m ON m.original_mode = trip_joined_xref.arrival_mode
 -- JOIN {{ ref('arrival_mode_to_survey') }} amts USING (arrival_mode)
 ---JOIN {{ ref ('arrival_mode_mapping')}} m USING (arrival_mode)

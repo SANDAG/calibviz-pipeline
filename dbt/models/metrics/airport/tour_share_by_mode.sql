@@ -2,6 +2,7 @@
 WITH arrival_modes AS (
     SELECT
         'arrival_mode' AS dimension,
+        m.scenario,
         COALESCE(s.level, m.level) AS level,
         COALESCE(s.arrival_mode, m.arrival_mode) AS dimension_value,
         COALESCE(s.tour_type, m.tour_type) AS tour_type,
@@ -19,6 +20,7 @@ WITH arrival_modes AS (
 origin_pmsas AS (
     SELECT
         'origin_pmsa' AS dimension,
+        m.scenario,
         COALESCE(s.level, m.level) AS level,
         COALESCE(s.origin_pmsa, m.origin_pmsa) AS dimension_value,
         COALESCE(s.tour_type, m.tour_type) AS tour_type,
@@ -35,6 +37,7 @@ origin_pmsas AS (
 
 SELECT
     dimension,
+    scenario,
     level,
     dimension_value,
     tour_type,
@@ -49,6 +52,7 @@ UNION ALL
 
 SELECT
     dimension,
+    scenario,
     level,
     dimension_value,
     tour_type,

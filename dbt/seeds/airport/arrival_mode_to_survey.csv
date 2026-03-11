@@ -1,5 +1,6 @@
 arrival_mode,mapped_value
 CURB_LOC1,Pickup Dropoff
+HOTEL_COURTESY, Shuttle Van
 KNR_LOC,Transit
 KNR_MIX,Transit
 KNR_PRM,Transit
