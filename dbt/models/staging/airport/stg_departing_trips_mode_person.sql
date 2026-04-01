@@ -16,11 +16,10 @@ arrival_mode_mapping as (
 )
 
 SELECT
-    * EXCLUDE (airport_access_mode, inbound_bool, person_trips, origin_pmsa),
+    * EXCLUDE (airport_access_mode, inbound_bool, person_trips, veh_trips, origin_pmsa),
     COALESCE(m.final_mode, s.airport_access_mode) as arrival_mode,
     inbound_bool as inbound,
-    --person_trips as trip,
-    veh_trips as trip,
+    person_trips as trip,
     origin_pmsa_label::VARCHAR as origin_pmsa
 FROM source s
 LEFT JOIN arrival_mode_mapping m 

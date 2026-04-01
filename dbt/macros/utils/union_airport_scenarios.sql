@@ -3,7 +3,7 @@
   {% for scenario in scenarios %}
     SELECT '{{ scenario }}' as scenario,
            * EXCLUDE (origin),
-           origin as origin_mgra 
+           origin as origin_mgra
     FROM {{ source(scenario, 'final_santrips') }}
     {% if not loop.last %}
     UNION ALL BY NAME

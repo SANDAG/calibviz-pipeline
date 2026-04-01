@@ -10,7 +10,7 @@ detailed_non_emp AS (
         dimension_columns=['scenario', 'arrival_mode', 'tour_type'],
         weight_column='trip',
         partition_column='scenario, tour_type',
-        where_clause="tour_type != 'emp'"
+        where_clause="tour_type != 'emp' AND tour_type != 'external'"
     ) }}
 ),
 

@@ -1,6 +1,8 @@
 -- models/intermediate/int_trips_by_origin_pmsa_results.sql
 WITH base_data AS (
-    SELECT * FROM {{ ref('stg_tripcount_mode') }}
+    SELECT * 
+    FROM {{ ref('stg_tripcount_mode') }}
+    WHERE outbound = true  -- Only outbound trips for origin PMSA analysis
 ),
 
 -- Detailed level (non-employee) (e.g. res_nb, vis_nb, etc.)
@@ -10,7 +12,7 @@ detailed_non_emp AS (
         dimension_columns=['scenario', 'origin_pmsa', 'tour_type'],
         weight_column='trip',
         partition_column='scenario, tour_type',
-        where_clause="tour_type != 'emp'"
+        where_clause="tour_type != 'emp' AND tour_type != 'external'"
     ) }}
 ),
 
@@ -21,7 +23,7 @@ general_non_emp AS (
         dimension_columns=['scenario', 'origin_pmsa', 'tour_type_general'],
         weight_column='trip',
         partition_column='scenario, tour_type_general',
-        where_clause="tour_type != 'emp'"
+        where_clause="tour_type != 'emp' AND tour_type_general != 'external'"
     ) }}
 ),
 
@@ -81,7 +83,7 @@ tour_type_totals AS (
 
 origin_pmsa_totals AS (
     {{ aggregate_sum_percentages(
-        source_table='combined',
+        source_table='base_data',
         dimension_columns=['scenario', 'origin_pmsa'],
         weight_column='trip',
         partition_column='scenario',

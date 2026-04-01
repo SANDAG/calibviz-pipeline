@@ -1,6 +1,6 @@
--- models/intermediate/int_trips_by_arrival_mode.sql
+-- models/intermediate/int_trips_by_arrival_mode_survey_person.sql
 WITH base_data AS (
-    SELECT * FROM {{ ref('stg_departing_trips_mode') }}
+    SELECT * FROM {{ ref('stg_departing_trips_mode_person') }}
 ),
 
 -- Detailed level (non-employee) (e.g. res_nb, vis_nb, etc.)
@@ -35,8 +35,6 @@ employee_only AS (
         where_clause="tour_type = 'emp'"
     ) }}
 ),
-
--- test everything combined
 
 combined as (
     SELECT 
