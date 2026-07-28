@@ -4,3 +4,4 @@ logs/
 *.pyc
 *.parquet
 local_data/
+dbt/profiles.yml
