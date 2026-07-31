@@ -20,7 +20,7 @@ Tips:
 The `include_gq` var in `dbt_project.yml` controls whether group quarters households/persons (`unittype != 0`) are included in staging and metrics models.
  - Default is `false` (GQ rows are filtered out).
  - To include GQ rows for a single run, override it on the command line:
-   - ```dbt run --vars '{include_gq: true}'```
+   - ```dbt run --select +metrics.resident+ --vars '{include_gq: true}'```
  - To change the default for all runs, edit the value in `dbt_project.yml`:
    - ```yaml
      vars:
