@@ -9,7 +9,7 @@ with abm3_persons_with_district as (
         p.distance_to_work,
         p.distance_to_school,
         geo.pseudomsa as home_district
-    from {{ source('abm3_resident_output', 'final_persons') }} as p
+    from {{ ref('stg_abm3_persons') }} as p
     left join {{ ref('mgra_taz_pmsa_xref') }} as geo
         on p.home_zone_id = geo.mgra
 ),
@@ -118,24 +118,36 @@ abm3_source as (
         on a.home_district = d.pmsa_id
 ),
 
-hts_source as (
+hts_2022_source as (
     select
         "District" as district,
         purpose,
-        value as hts_avg_distance
-    from {{ source('hts', 'mandTripLengths') }}
+        value as hts_2022_avg_distance
+    from {{ ref('stg_hts_mandTripLengths') }}
+),
+
+hts_2023_source as (
+    select
+        "District" as district,
+        purpose,
+        value as hts_2023_avg_distance
+    from {{ ref('stg_hts_2023_mandTripLengths') }}
 ),
 
 joined as (
     select
-        coalesce(a.district, h.district) as district,
-        coalesce(a.purpose, h.purpose) as purpose,
+        coalesce(a.district, h22.district, h23.district) as district,
+        coalesce(a.purpose, h22.purpose, h23.purpose) as purpose,
         coalesce(a.abm_avg_distance, 0) as abm_avg_distance,
-        coalesce(h.hts_avg_distance, 0) as hts_avg_distance
+        coalesce(h22.hts_2022_avg_distance, 0) as hts_2022_avg_distance,
+        coalesce(h23.hts_2023_avg_distance, 0) as hts_2023_avg_distance
     from abm3_source as a
-    full join hts_source as h
-        on a.district = h.district
-        and a.purpose = h.purpose
+    full join hts_2022_source as h22
+        on a.district = h22.district
+        and a.purpose = h22.purpose
+    full join hts_2023_source as h23
+        on coalesce(a.district, h22.district) = h23.district
+        and coalesce(a.purpose, h22.purpose) = h23.purpose
 )
 
 select * from joined
