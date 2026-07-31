@@ -8,7 +8,6 @@ sources:
       - name: final_households
       - name: final_persons
       - name: final_tours
-      - name: final_land_use
   - name: general_survey
     meta:
       external_location: '../local_data/{name}.csv'
@@ -39,11 +38,16 @@ sources:
       external_location: '../data/hts_2023/{name}.csv'
     tables: *hts_tables
   - name: abm3_airport_output
+  #airport model sources
+  - name: "2022_SAN" #1.	base scenario
     meta: 
-      external_location: 'T:/STORAGE-63T/2025RP_final/2022/output/airport.SAN/{name}.csv'
-    tables:
+      external_location: 'T:\STORAGE-63T/ATC/abm_runs/SAN_Sensitivity/2022_SAN/output/airport.SAN/{name}.csv'
+    tables: &airport_tables  # Define anchor here
       - name: final_santrips
-      - name: final_santours
+  - name: "2022_wsp_calib" # updated using the destination choice model calibrated parameters
+    meta: 
+      external_location: 'T:/STORAGE-63T/ABM3_EMME_upgrade/2022_wsp_calib/output/airport.SAN/{name}.csv'
+    tables: *airport_tables  # Reference anchor
 
   - name: onboard_transit_survey
     meta:

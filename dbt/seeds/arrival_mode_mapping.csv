@@ -1,0 +1,13 @@
+arrival_mode,mapped_mode
+drop_off,Drop-off/Pick up
+shuttle,Shared Shuttle Van
+public_transit,Public Transportation
+park_escort,Drop-off/Pick up
+parked_on_site,Personal Car Parked
+parked_off_site,Personal Car Parked
+parked_employee,Personal Car Parked
+parked_unknown,Personal Car Parked
+rental_car,Rental Car
+tnc,UBER/Lyft
+taxi,Taxi
+active_transportation,Walk

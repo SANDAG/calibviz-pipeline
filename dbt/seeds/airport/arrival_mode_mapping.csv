@@ -1,24 +1,22 @@
 original_mode,intermediate_mode,final_mode
-CURB_LOC1,drop_off,Drop-off/Pick up
-HOTEL_COURTESY,shuttle,Shared Shuttle Van
-KNR_LOC,public_transit,Public Transportation
-KNR_MIX,public_transit,Public Transportation
-KNR_PRM,public_transit,Public Transportation
-PARK_ESCORT,drop_off,Drop-off/Pick up
-PARK_LOC1,parked_on_site,Personal Car Parked
-PARK_LOC4,parked_off_site,Personal Car Parked
-PARK_LOC5,parked_off_site,Personal Car Parked
+CURB_LOC1,drop_off,Pickup Dropoff
+HOTEL_COURTESY,shuttle,Shuttle Van
+KNR_LOC,public_transit,Transit
+KNR_MIX,public_transit,Transit
+KNR_PRM,public_transit,Transit
+PARK_ESCORT,drop_off,Pickup Dropoff
+PARK_LOC1,parked_on_site,Drive and Park
+PARK_LOC4,parked_off_site,Drive and Park
+PARK_LOC5,parked_off_site,Drive and Park
 RENTAL,rental_car,Rental Car
 TAXI_LOC1,taxi,Taxi
-RIDEHAIL_LOC1,tnc,UBER/Lyft
-SHUTTLEVAN,shuttle,Shared Shuttle Van
-TNC_LOC,public_transit,Public Transportation
-TNC_MIX,public_transit,Public Transportation
-TNC_PRM,public_transit,Public Transportation
-WALK,active_transportation,Walk
-WALK_LOC,public_transit,Public Transportation
-WALK_MIX,public_transit,Public Transportation
-WALK_PRM,public_transit,Public Transportation
-x,park_escort,Drop-off/Pick up
-x,parked_employee,Personal Car Parked
-x,parked_unknown,Personal Car Parked
+RIDEHAIL_LOC1,tnc,Ridehail
+SHUTTLEVAN,hotel_shuttle,Shuttle Van
+TNC_LOC,public_transit,Transit
+TNC_MIX,public_transit,Transit
+TNC_PRM,public_transit,Transit
+WALK_LOC,public_transit,Transit
+WALK_MIX,public_transit,Transit
+WALK_PRM,public_transit,Transit
+x,parked_unknown,Drive and Park
+x,hotel_shuttle,Shuttle Van

@@ -10,7 +10,7 @@ detailed_non_emp AS (
         dimension_columns=['origin_pmsa', 'tour_type'],
         weight_column='trip',
         partition_column='tour_type',
-        where_clause="tour_type != 'emp'"
+        where_clause="tour_type != 'emp' AND tour_type != 'external'"
     ) }}
 ),
 
