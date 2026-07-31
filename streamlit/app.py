@@ -22,7 +22,8 @@ pages = {
                                          st.Page("pages/resident/work_metrics/district_flows.py"), 
                                          st.Page("pages/resident/work_metrics/external_location.py")],
     "Resident - Trip Metrics": [st.Page("pages/resident/trip_metrics/tour_mode.py"),
-                                st.Page("pages/resident/trip_metrics/trip_mode.py")],
+                                st.Page("pages/resident/trip_metrics/trip_mode.py"),
+                                st.Page("pages/resident/trip_metrics/mandatory_tour_length_InternalTrip.py")],
     "Airport Metrics": [st.Page("pages/airport/airport_tour_mode.py", title="Tour Mode Comparison (Vehicle Trips)"),
                         st.Page("pages/airport/airport_tour_mode_person.py", title="Tour Mode Comparison (Person Trips)")]
 }

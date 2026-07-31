@@ -7,7 +7,7 @@ calibviz_pipeline:
       extensions:
         - delta
         - parquet
-      threads: 10
+      threads: 20
 
     prod:
       type: duckdb
