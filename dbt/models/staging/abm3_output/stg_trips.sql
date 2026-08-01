@@ -4,4 +4,4 @@
        format='parquet'
    ) }}
 
-SELECT * FROM {{ source('abm3_resident_output', 'final_trips') }}
+{{ union_resident_trips() }}

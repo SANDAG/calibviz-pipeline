@@ -2,8 +2,8 @@
     source_table,
     dimension_columns,
     weight_column,
-    partition_column=none,
-    where_clause=none
+    partition_column=None,
+    where_clause=None
 ) %}
 
 select 

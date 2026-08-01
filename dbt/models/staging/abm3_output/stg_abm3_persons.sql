@@ -1,10 +1,10 @@
 with source as (
-    select *
-    from {{ source('abm3_resident_output', 'final_persons') }}
+    {{ union_resident_persons() }}
 ),
 
 filter_columns as (
     select
+        scenario,
         person_id,
         ptype,
         household_id,

@@ -5,3 +5,4 @@ logs/
 *.parquet
 local_data/
 dbt/profiles.yml
+streamlit/__pycache__

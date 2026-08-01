@@ -73,7 +73,6 @@ tour_type_totals AS (
         source_table='combined',
         dimension_columns=['tour_type'],
         weight_column='trip',
-        partition_column=None,
         where_clause="tour_type != 'emp'"
     ) }}
 ),
@@ -83,7 +82,6 @@ arrival_mode_totals AS (
         source_table='base_data',
         dimension_columns=['arrival_mode'],
         weight_column='trip',
-        partition_column=None,
         where_clause="tour_type != 'emp'"
     ) }}
 )

@@ -1,10 +1,10 @@
 with source as (
-    select *
-    from {{ source('abm3_resident_output', 'final_households') }}
+    {{ union_resident_households() }}
 ),
 
 filter_columns as (
     select
+        scenario,
         household_id,
         hhsize,
         auto_ownership,

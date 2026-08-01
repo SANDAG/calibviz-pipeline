@@ -1,9 +1,9 @@
 with source as (
-    select *
-    from read_csv({{ source('abm3_resident_output', 'final_trips') }}, ignore_errors=true)
+    {{ union_resident_trips() }}
 ),
 filter_columns as (
-    select trip_id,
+    select scenario,
+        trip_id,
         tour_id,
         household_id,
         trip_mode,

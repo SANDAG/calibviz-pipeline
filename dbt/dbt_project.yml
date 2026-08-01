@@ -63,6 +63,9 @@ vars:
   - "2022_S0_v2"
   - "2026_S1"
   base_path: "T:/STORAGE-63T/2025RP_draft/abm_runs_v2/"
+  resident_scenarios:
+  - "2022_V1542"
+  - "2022_V1542_SP"
   airport_scenarios:
   - "2022_SAN"
   - "2022_wsp_calib"
