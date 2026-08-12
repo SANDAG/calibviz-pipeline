@@ -2,14 +2,17 @@ import streamlit as st
 import sys
 import plotly.graph_objects as go
 import pandas as pd
-import yaml
-from pathlib import Path
 
 sys.path.append('..')
 
 from database import (
     get_db_connection,
     display_connection_status
+)
+from scenario_config import (
+    render_scenario_selector,
+    render_survey_year_selector,
+    format_scenario_sql_list
 )
 
 st.set_page_config(page_title="Mandatory Tour Length - InternalTrip", layout="wide")
@@ -18,43 +21,15 @@ st.title("Mandatory Tour Length - InternalTrip")
 
 display_connection_status()
 
-# Load resident scenarios from dbt_project.yml
-dbt_project_path = Path(__file__).parent.parent.parent.parent.parent / "dbt" / "dbt_project.yml"
-with open(dbt_project_path, 'r') as f:
-    dbt_config = yaml.safe_load(f)
-    resident_scenarios_list = dbt_config.get('vars', {}).get('resident_scenarios', [])
+# Get scenario and survey year selections
+scenarios = render_scenario_selector()
+survey_years = render_survey_year_selector()
 
 # Query and display data
 conn = get_db_connection()
 
-# Scenario selector - allow multiple selections
-st.markdown("### Select ABM Scenario(s)")
-scenarios = st.multiselect(
-    "Scenarios",
-    options=resident_scenarios_list,
-    default=[resident_scenarios_list[0]] if resident_scenarios_list else [],
-    label_visibility="collapsed"
-)
-
-if not scenarios:
-    st.warning("Please select at least one scenario")
-    st.stop()
-
-# Survey year selector - allow multiple selections
-st.markdown("### Select Survey Year(s)")
-survey_years = st.multiselect(
-    "Survey Years",
-    options=["2022", "2023"],
-    default=["2022"],
-    label_visibility="collapsed"
-)
-
-if not survey_years:
-    st.warning("Please select at least one survey year")
-    st.stop()
-
 # Query the dbt model - all logic is now in the dbt model
-scenarios_list = "', '".join(scenarios)
+scenarios_list = format_scenario_sql_list(scenarios)
 query = f"""
     SELECT
         scenario,
@@ -185,7 +160,7 @@ st.markdown("---")
 st.header("📊 Distance Distribution by Bin")
 
 # Query mandTLFD metric for distance distribution
-scenarios_list = "', '".join(scenarios)
+scenarios_list = format_scenario_sql_list(scenarios)
 query_dist = f"""
     SELECT
         scenario,
