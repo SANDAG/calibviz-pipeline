@@ -1,10 +1,12 @@
 with abm3_source as (
-    select person_type,
+    select
+        p.scenario,
+        person_type,
         SUM(CASE WHEN transit_pass_ownership = 1 THEN 1 ELSE 0 END) / COUNT(*) as proportion
     from {{ ref('stg_abm3_persons') }} as p
     left join {{ ref('ptype_mapping') }} as m
     on p.ptype = m.ptype
-    group by person_type
+    group by p.scenario, person_type
 ),
 
 hts_source as (
@@ -14,6 +16,7 @@ hts_source as (
 
 hts_abm3_joined as (
     select 
+        a.scenario,
         a.person_type, 
         a.proportion as abm_proportion, 
         h.proportion as hts_proportion
@@ -22,3 +25,4 @@ hts_abm3_joined as (
 )
 
 select * from hts_abm3_joined
+order by scenario, person_type

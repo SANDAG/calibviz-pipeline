@@ -1,5 +1,6 @@
 with abm3_source as (
     select
+        person.scenario,
         ptype.person_type,
         case
             when person.num_non_mand = 0 then '0'
@@ -12,7 +13,14 @@ with abm3_source as (
     from {{ ref('stg_abm3_persons') }} as person
     left join {{ ref('ptype_mapping') }} as ptype
         on person.ptype = ptype.ptype
-    group by 1, 2
+    group by person.scenario, ptype.person_type, 
+        case
+            when person.num_non_mand = 0 then '0'
+            when person.num_non_mand = 1 then '1'
+            when person.num_non_mand = 2 then '2'
+            when person.num_non_mand >= 3 then '3+'
+            else 'None'
+        end
 ),
 
 hts_source as (
@@ -25,6 +33,7 @@ hts_source as (
 
 hts_abm3_joined as (
     select
+        a.scenario,
         COALESCE(a.person_type, h.person_type) as person_type,
         COALESCE(a.num_tours, h.num_tours) as num_tours,
         COALESCE(a.freq, 0) as abm_count,
@@ -36,14 +45,16 @@ hts_abm3_joined as (
 
 hts_abm3_total as (
     select
+        scenario,
         'Total' as person_type,
         num_tours,
         SUM(abm_count) as abm_count,
         SUM(hts_count) as hts_count
     from hts_abm3_joined
-    group by num_tours
+    group by scenario, num_tours
 )
 
 select * from hts_abm3_joined
 union all
 select * from hts_abm3_total
+order by scenario, person_type, num_tours
