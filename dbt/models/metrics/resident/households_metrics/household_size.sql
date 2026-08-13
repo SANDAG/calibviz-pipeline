@@ -4,6 +4,7 @@
 
 with abm3_hhsize_capped as (
     select 
+        scenario,
         case 
             when hhsize > 5 then 5 
             else hhsize 
@@ -11,6 +12,7 @@ with abm3_hhsize_capped as (
         count(*) as household_count
     from {{ ref('stg_abm3_households') }} 
     group by 
+        scenario,
         case 
             when hhsize > 5 then 5 
             else hhsize 
@@ -19,9 +21,10 @@ with abm3_hhsize_capped as (
 
 abm3_source as (
     select 
+        scenario,
         hhsize,
         household_count,
-        household_count * 1.0 / sum(household_count) over () as proportion
+        household_count * 1.0 / sum(household_count) over (partition by scenario) as proportion
     from abm3_hhsize_capped
 ),
 
@@ -34,6 +37,7 @@ hts_source as (
 
 hts_abm3_joined as (
     select 
+        a.scenario,
         a.hhsize, 
         a.proportion as abm_proportion, 
         h.proportion as hts_proportion
@@ -42,4 +46,4 @@ hts_abm3_joined as (
 )
 
 select * from hts_abm3_joined
-order by hhsize
+order by scenario, hhsize

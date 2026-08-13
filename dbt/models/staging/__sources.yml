@@ -1,13 +1,18 @@
 sources:
-  - name: abm3_resident_output
+  # Resident model sources
+  - name: "2022_V1542" # base scenario
     meta:
-      #external_location: '../data/abm3/{name}.csv'
-      external_location: 'T:/STORAGE-63T/2025RP_draft/abm_runs_v2/2022_S0_v2_rerun/output/resident/{name}.csv'
-    tables:
+      external_location: 'T:/STORAGE-63T/abm3_runs/2022_V1542/output/resident/{name}.csv'
+    tables: &resident_tables  # Define anchor here
       - name: final_trips
       - name: final_households
       - name: final_persons
       - name: final_tours
+      - name: final_land_use
+  - name: "2022_V1542_SP" # comparison scenario
+    meta:
+      external_location: 'T:/STORAGE-63T/abm3_runs/2022_V1542_SP/output/resident/{name}.csv'
+    tables: *resident_tables  # Reference anchor
   - name: general_survey
     meta:
       external_location: '../local_data/{name}.csv'
@@ -33,6 +38,7 @@ sources:
       - name: mtfSummary_vis
       - name: inmSummary_vis
       - name: mandTripLengths
+      - name: mandTLFD
   - name: hts_2023
     meta:
       external_location: '../data/hts_2023/{name}.csv'

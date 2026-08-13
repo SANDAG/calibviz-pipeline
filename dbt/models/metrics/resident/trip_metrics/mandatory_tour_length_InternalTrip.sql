@@ -1,5 +1,6 @@
 with abm3_persons_with_district as (
     select
+        p.scenario,
         p.person_id,
         p.ptype,
         p.workplace_zone_id,
@@ -16,6 +17,7 @@ with abm3_persons_with_district as (
 
 abm3_work as (
     select
+        scenario,
         home_district,
         'Work' as purpose,
         avg(distance_to_work) as avg_distance
@@ -24,11 +26,12 @@ abm3_work as (
         workplace_zone_id > 0
         and work_from_home = false
         and is_internal_worker = true
-    group by home_district
+    group by scenario, home_district
 ),
 
 abm3_university as (
     select
+        scenario,
         home_district,
         'University' as purpose,
         avg(distance_to_school) as avg_distance
@@ -36,11 +39,12 @@ abm3_university as (
     where
         ptype = 3
         and school_zone_id > 0
-    group by home_district
+    group by scenario, home_district
 ),
 
 abm3_school as (
     select
+        scenario,
         home_district,
         'School' as purpose,
         avg(distance_to_school) as avg_distance
@@ -48,7 +52,7 @@ abm3_school as (
     where
         ptype >= 6
         and school_zone_id > 0
-    group by home_district
+    group by scenario, home_district
 ),
 
 abm3_all as (
@@ -62,6 +66,7 @@ abm3_all as (
 -- Calculate totals directly from raw person data (not average of averages)
 abm3_work_total as (
     select
+        scenario,
         null as home_district,
         'Work' as purpose,
         avg(distance_to_work) as avg_distance
@@ -70,10 +75,12 @@ abm3_work_total as (
         workplace_zone_id > 0
         and work_from_home = false
         and is_internal_worker = true
+    group by scenario
 ),
 
 abm3_university_total as (
     select
+        scenario,
         null as home_district,
         'University' as purpose,
         avg(distance_to_school) as avg_distance
@@ -81,10 +88,12 @@ abm3_university_total as (
     where
         ptype = 3
         and school_zone_id > 0
+    group by scenario
 ),
 
 abm3_school_total as (
     select
+        scenario,
         null as home_district,
         'School' as purpose,
         avg(distance_to_school) as avg_distance
@@ -92,10 +101,12 @@ abm3_school_total as (
     where
         ptype >= 6
         and school_zone_id > 0
+    group by scenario
 ),
 
 abm3_with_totals as (
     select
+        scenario,
         home_district,
         purpose,
         avg_distance
@@ -110,6 +121,7 @@ abm3_with_totals as (
 
 abm3_source as (
     select
+        scenario,
         coalesce(d.pmsa_name, 'Total') as district,
         purpose,
         avg_distance as abm_avg_distance
@@ -136,6 +148,7 @@ hts_2023_source as (
 
 joined as (
     select
+        a.scenario,
         coalesce(a.district, h22.district, h23.district) as district,
         coalesce(a.purpose, h22.purpose, h23.purpose) as purpose,
         coalesce(a.abm_avg_distance, 0) as abm_avg_distance,
@@ -151,4 +164,4 @@ joined as (
 )
 
 select * from joined
-order by purpose, district
+order by scenario, purpose, district

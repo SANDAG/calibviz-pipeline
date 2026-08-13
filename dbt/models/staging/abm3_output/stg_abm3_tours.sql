@@ -1,9 +1,9 @@
 with source as (
-    select *
-    from {{ source('abm3_resident_output', 'final_tours') }}
+    {{ union_resident_tours() }}
 ),
 filter_columns as (
     select
+        scenario,
         tour_id,
         person_id,
         household_id,

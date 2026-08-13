@@ -42,7 +42,6 @@ totals AS (
         source_table='base_data',
         dimension_columns=['origin_pmsa'],
         weight_column='trip',
-        partition_column=none,  -- Overall percentage across all
         where_clause="tour_type != 'emp'"
     ) }}
 )

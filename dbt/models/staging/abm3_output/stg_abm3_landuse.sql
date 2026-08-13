@@ -1,9 +1,9 @@
 with source as (
-    select *
-    from {{ source('abm3_resident_output', 'final_land_use') }}
+    {{ union_resident_land_use() }}
 )
 
 select
+    scenario,
     mgra,
     exp_daily as daily_parking_expenditure
 from source

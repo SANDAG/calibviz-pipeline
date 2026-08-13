@@ -6,7 +6,7 @@
 ) }}
 
 with source as (
-  SELECT * FROM {{ source('abm3_resident_output', 'final_households') }}
+  {{ union_resident_households() }}
 ),
 
 hhsize_capped as (

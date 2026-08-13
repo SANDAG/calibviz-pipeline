@@ -71,7 +71,6 @@ tour_type_totals AS (
         source_table='combined',
         dimension_columns=['tour_type'],
         weight_column='trip',
-        partition_column=None,
         where_clause="tour_type != 'emp'"
     ) }}
 ),
@@ -81,7 +80,6 @@ origin_pmsa_totals AS (
         source_table='combined',
         dimension_columns=['origin_pmsa'],
         weight_column='trip',
-        partition_column=None,
         where_clause="tour_type != 'emp'"
     ) }}
 )
