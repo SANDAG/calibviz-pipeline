@@ -10,6 +10,11 @@ st.set_page_config(page_title="Overview", layout="wide")
 
 st.title("Overview")
 
+st.info(
+    "Check the `include_gq` var in `dbt/dbt_project.yml` to see whether "
+    "group quarters households/persons are included in these metrics."
+)
+
 display_connection_status()
 
 # Query and display data

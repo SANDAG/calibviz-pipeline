@@ -150,6 +150,8 @@ calibviz-pipeline/
 ---
 # 📚 Documentation
 
+See [dbt/README.md](dbt/README.md) for more details on running dbt models and available configuration (e.g. group quarters inclusion).
+
 ### Generate and View dbt Documentation
 ```bash
 # Navigate to dbt directory
