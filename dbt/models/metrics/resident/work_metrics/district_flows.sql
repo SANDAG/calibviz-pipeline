@@ -4,10 +4,11 @@ with abm3_source as (
     persons.scenario,
     home_pmsa.pmsa_name as home_district,
     work_pmsa.pmsa_name as work_district,
-    count(*) as freq
+    count(distinct persons.person_id) as freq
     from {{ ref('stg_abm3_persons') }} as persons
     left join {{ ref('stg_abm3_households') }} as households
     on persons.household_id = households.household_id
+        and persons.scenario = households.scenario
     inner join {{ ref('mgra_taz_pmsa_xref') }} as home_mgra_pmsa_mapping
     on persons.home_zone_id = home_mgra_pmsa_mapping.MGRA
     inner join {{ ref('pmsa_name') }} as home_pmsa
@@ -40,8 +41,9 @@ hts_abm3_joined as (
         a.freq as abm_total_workers,
         h.freq as hts_total_workers
     from abm3_source a
-    full join hts_source h
-    on a.home_district = h.home_district and a.work_district = h.work_district
+    left join hts_source h
+    on a.home_district = h.home_district 
+        and a.work_district = h.work_district
 ),
 
 hts_abm3_total as (

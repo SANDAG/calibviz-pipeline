@@ -60,8 +60,8 @@ seeds:
 
 vars:
   resident_scenarios:
-  - "2022_V1542"
-  - "2022_V1542_SP"
+  - "2022_wl_calib_2d"
+  - "2022_V1552_wl"
   airport_scenarios:
   - "2022_SAN"
   - "2022_wsp_calib"
