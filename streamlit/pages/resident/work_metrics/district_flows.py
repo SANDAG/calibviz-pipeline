@@ -148,12 +148,13 @@ with chart_col:
 st.markdown("---")
 st.header("🗺️ Origin-Destination Flow Matrix")
 
-# Create tabs for each scenario plus difference tab if multiple scenarios
+# Create tabs for each scenario, HTS, and comparison tab
 if len(scenarios) > 1:
-    tab_labels = [f"ABM {scenario}" for scenario in scenarios] + ["Difference"]
+    tab_labels = [f"ABM {scenario}" for scenario in scenarios] + ["HTS", "Comparison"]
     matrix_tabs = st.tabs(tab_labels)
 else:
-    matrix_tabs = [st.container()]
+    tab_labels = [f"ABM {scenarios[0]}", "HTS", "Comparison"]
+    matrix_tabs = st.tabs(tab_labels)
 
 # Show individual scenario matrices
 for idx, scenario in enumerate(scenarios):
@@ -251,36 +252,148 @@ for idx, scenario in enumerate(scenarios):
         # Add summary statistics
         st.caption(f"**Total Workers:** {int(matrix_data.loc['Total', 'Total']):,}")
 
-# Show difference tab if multiple scenarios
-if len(scenarios) > 1:
-    with matrix_tabs[-1]:  # Last tab is the difference tab
-        st.subheader("🔄 Scenario Comparison")
-        
-        # Scenario selectors
-        col1, col2 = st.columns(2)
-        with col1:
-            scenario_base = st.selectbox(
-                "Base Scenario",
-                options=scenarios,
-                index=0,
-                key="diff_base"
+# Show HTS matrix tab
+with matrix_tabs[len(scenarios)]:
+    st.subheader("📊 HTS Flow Matrix")
+    
+    # Get HTS data (use first scenario since HTS data is the same across all)
+    df_hts_data = df[df['scenario'] == scenarios[0]].copy()
+    df_hts_no_total = df_hts_data[df_hts_data['home_district'] != 'Total']
+    
+    # Create pivot table for HTS matrix
+    matrix_hts = df_hts_no_total.pivot_table(
+        index='home_district',
+        columns='work_district',
+        values='hts_total_workers',
+        aggfunc='first',
+        fill_value=0
+    )
+    
+    # Sort index and columns
+    matrix_hts = matrix_hts.sort_index()
+    matrix_hts = matrix_hts[sorted(matrix_hts.columns)]
+    
+    # Add row totals
+    matrix_hts['Total'] = matrix_hts.sum(axis=1)
+    
+    # Add column totals
+    col_totals = matrix_hts.sum(axis=0)
+    matrix_hts.loc['Total'] = col_totals
+    
+    # Display options
+    col1, col2 = st.columns([1, 3])
+    with col1:
+        display_mode_hts = st.radio(
+            "Display Mode",
+            ["Counts", "Percentages"],
+            key="display_mode_hts",
+            horizontal=True
+        )
+    
+    with col2:
+        if display_mode_hts == "Percentages":
+            pct_base_hts = st.radio(
+                "Percentage Base",
+                ["Row Total", "Column Total", "Grand Total"],
+                key="pct_base_hts",
+                horizontal=True
             )
-        with col2:
-            # Filter out the base scenario from comparison options
-            comparison_options = [s for s in scenarios if s != scenario_base]
-            if comparison_options:
-                scenario_compare = st.selectbox(
-                    "Compare To",
-                    options=comparison_options,
+    
+    # Create display matrix
+    if display_mode_hts == "Counts":
+        display_matrix_hts = matrix_hts.copy()
+    else:
+        # Calculate percentages
+        if pct_base_hts == "Row Total":
+            display_matrix_hts = matrix_hts.div(matrix_hts['Total'], axis=0) * 100
+            display_matrix_hts['Total'] = 100.0
+            display_matrix_hts.loc['Total'] = matrix_hts.loc['Total'].div(matrix_hts.loc['Total', 'Total']) * 100
+        elif pct_base_hts == "Column Total":
+            display_matrix_hts = matrix_hts.div(matrix_hts.loc['Total'], axis=1) * 100
+            display_matrix_hts.loc['Total'] = 100.0
+        else:  # Grand Total
+            grand_total = matrix_hts.loc['Total', 'Total']
+            display_matrix_hts = (matrix_hts / grand_total) * 100
+    
+    # Create column config for formatting
+    column_config_hts = {}
+    for col in display_matrix_hts.columns:
+        if display_mode_hts == "Counts":
+            column_config_hts[col] = st.column_config.NumberColumn(
+                col,
+                format="%.0f"
+            )
+        else:
+            column_config_hts[col] = st.column_config.NumberColumn(
+                col,
+                format="%.1f%%"
+            )
+    
+    # Display the matrix
+    st.dataframe(
+        display_matrix_hts,
+        column_config=column_config_hts,
+        use_container_width=True,
+        height=400
+    )
+    
+    # Add summary statistics
+    st.caption(f"**Total Workers:** {int(matrix_hts.loc['Total', 'Total']):,}")
+
+# Show comparison tab
+with matrix_tabs[-1]:  # Last tab is the comparison tab
+    st.subheader("🔄 Scenario Comparison")
+    
+    # Comparison type selector
+    comparison_type = st.radio(
+        "Comparison Type",
+        ["ABM vs ABM", "ABM vs HTS"],
+        horizontal=True,
+        key="comparison_type"
+    )
+    
+    if comparison_type == "ABM vs ABM":
+        if len(scenarios) < 2:
+            st.warning("Select at least 2 scenarios to compare ABM vs ABM")
+            scenario_base = None
+            scenario_compare = None
+        else:
+            # Scenario selectors for ABM vs ABM
+            col1, col2 = st.columns(2)
+            with col1:
+                scenario_base = st.selectbox(
+                    "Base Scenario",
+                    options=scenarios,
                     index=0,
-                    key="diff_compare"
+                    key="diff_base"
                 )
-            else:
-                st.warning("Select at least 2 different scenarios to compare")
-                scenario_compare = None
-        
-        if scenario_compare:
-            # Get matrices for both scenarios
+            with col2:
+                # Filter out the base scenario from comparison options
+                comparison_options = [s for s in scenarios if s != scenario_base]
+                if comparison_options:
+                    scenario_compare = st.selectbox(
+                        "Compare To",
+                        options=comparison_options,
+                        index=0,
+                        key="diff_compare"
+                    )
+                else:
+                    st.warning("Select at least 2 different scenarios to compare")
+                    scenario_compare = None
+    else:  # ABM vs HTS
+        # Scenario selector for ABM
+        scenario_base = "HTS"
+        scenario_compare = st.selectbox(
+            "ABM Scenario",
+            options=scenarios,
+            index=0,
+            key="abm_vs_hts_scenario"
+        )
+    
+    if scenario_compare:
+        # Get matrices based on comparison type
+        if comparison_type == "ABM vs ABM":
+            # Get base ABM matrix
             df_base = df[df['scenario'] == scenario_base].copy()
             df_base_no_total = df_base[df_base['home_district'] != 'Total']
             
@@ -292,6 +405,7 @@ if len(scenarios) > 1:
                 fill_value=0
             )
             
+            # Get comparison ABM matrix
             df_comp = df[df['scenario'] == scenario_compare].copy()
             df_comp_no_total = df_comp[df_comp['home_district'] != 'Total']
             
@@ -302,102 +416,163 @@ if len(scenarios) > 1:
                 aggfunc='sum',
                 fill_value=0
             )
+        else:  # ABM vs HTS
+            # Get HTS matrix as base
+            df_hts_comp = df[df['scenario'] == scenarios[0]].copy()  # HTS data is same across scenarios
+            df_hts_comp_no_total = df_hts_comp[df_hts_comp['home_district'] != 'Total']
             
-            # Ensure both matrices have the same structure
-            all_rows = sorted(set(matrix_base.index) | set(matrix_comp.index))
-            all_cols = sorted(set(matrix_base.columns) | set(matrix_comp.columns))
+            matrix_base = df_hts_comp_no_total.pivot_table(
+                index='home_district',
+                columns='work_district',
+                values='hts_total_workers',
+                aggfunc='first',
+                fill_value=0
+            )
             
-            matrix_base = matrix_base.reindex(index=all_rows, columns=all_cols, fill_value=0)
-            matrix_comp = matrix_comp.reindex(index=all_rows, columns=all_cols, fill_value=0)
+            # Get ABM matrix for comparison
+            df_comp = df[df['scenario'] == scenario_compare].copy()
+            df_comp_no_total = df_comp[df_comp['home_district'] != 'Total']
             
-            # Display mode selector
+            matrix_comp = df_comp_no_total.pivot_table(
+                index='home_district',
+                columns='work_district',
+                values='abm_total_workers',
+                aggfunc='sum',
+                fill_value=0
+            )
+        
+        # Ensure both matrices have the same structure
+        all_rows = sorted(set(matrix_base.index) | set(matrix_comp.index))
+        all_cols = sorted(set(matrix_base.columns) | set(matrix_comp.columns))
+        
+        matrix_base = matrix_base.reindex(index=all_rows, columns=all_cols, fill_value=0)
+        matrix_comp = matrix_comp.reindex(index=all_rows, columns=all_cols, fill_value=0)
+        
+        # Display mode selector
+        if comparison_type == "ABM vs HTS":
+            diff_mode = st.radio(
+                "Difference Display",
+                ["Absolute Difference", "Percentage Point Difference"],
+                horizontal=True,
+                key="diff_mode"
+            )
+        else:
             diff_mode = st.radio(
                 "Difference Display",
                 ["Absolute Difference", "Percentage Change"],
                 horizontal=True,
                 key="diff_mode"
             )
+        
+        # Calculate difference
+        if diff_mode == "Absolute Difference":
+            diff_matrix = matrix_comp - matrix_base
+            # Add row and column totals
+            diff_matrix['Total'] = diff_matrix.sum(axis=1)
+            col_totals = diff_matrix.sum(axis=0)
+            diff_matrix.loc['Total'] = col_totals
+        elif comparison_type == "ABM vs HTS" and diff_mode == "Percentage Point Difference":
+            # For ABM vs HTS, show difference in percentage points
+            # Convert both matrices to percentages of grand total
+            grand_total_base = matrix_base.sum().sum()
+            grand_total_comp = matrix_comp.sum().sum()
             
-            # Calculate difference
-            if diff_mode == "Absolute Difference":
-                diff_matrix = matrix_comp - matrix_base
-                # Add row and column totals
-                diff_matrix['Total'] = diff_matrix.sum(axis=1)
-                col_totals = diff_matrix.sum(axis=0)
-                diff_matrix.loc['Total'] = col_totals
-            else:  # Percentage Change
-                # Calculate percentage change for each cell: (new - old) / old * 100
-                with np.errstate(divide='ignore', invalid='ignore'):
-                    diff_matrix = ((matrix_comp - matrix_base) / matrix_base.replace(0, np.nan)) * 100
-                    diff_matrix = diff_matrix.fillna(0)
-                
-                # Calculate row totals correctly: (sum_new - sum_old) / sum_old * 100
-                row_totals_base = matrix_base.sum(axis=1)
-                row_totals_comp = matrix_comp.sum(axis=1)
-                with np.errstate(divide='ignore', invalid='ignore'):
-                    diff_matrix['Total'] = ((row_totals_comp - row_totals_base) / row_totals_base.replace(0, np.nan)) * 100
-                    diff_matrix['Total'] = diff_matrix['Total'].fillna(0)
-                
-                # Calculate column totals correctly: (sum_new - sum_old) / sum_old * 100
-                col_totals_base = matrix_base.sum(axis=0)
-                col_totals_comp = matrix_comp.sum(axis=0)
-                with np.errstate(divide='ignore', invalid='ignore'):
-                    col_totals_pct = ((col_totals_comp - col_totals_base) / col_totals_base.replace(0, np.nan)) * 100
-                    col_totals_pct = col_totals_pct.fillna(0)
-                
-                # Add the Total column to col_totals_pct for the grand total
-                grand_total_base = matrix_base.sum().sum()
-                grand_total_comp = matrix_comp.sum().sum()
-                grand_total_pct = ((grand_total_comp - grand_total_base) / grand_total_base) * 100 if grand_total_base > 0 else 0
-                col_totals_pct['Total'] = grand_total_pct
-                
-                diff_matrix.loc['Total'] = col_totals_pct
+            matrix_base_pct = (matrix_base / grand_total_base) * 100 if grand_total_base > 0 else matrix_base * 0
+            matrix_comp_pct = (matrix_comp / grand_total_comp) * 100 if grand_total_comp > 0 else matrix_comp * 0
             
-            # Display title
+            # Calculate difference in percentage points
+            diff_matrix = matrix_comp_pct - matrix_base_pct
+            
+            # Add row and column totals (differences in percentage points)
+            diff_matrix['Total'] = diff_matrix.sum(axis=1)
+            col_totals = diff_matrix.sum(axis=0)
+            diff_matrix.loc['Total'] = col_totals
+        else:  # Percentage Change for ABM vs ABM
+            # Calculate percentage change for each cell: (new - old) / old * 100
+            with np.errstate(divide='ignore', invalid='ignore'):
+                diff_matrix = ((matrix_comp - matrix_base) / matrix_base.replace(0, np.nan)) * 100
+                diff_matrix = diff_matrix.fillna(0)
+            
+            # Calculate row totals correctly: (sum_new - sum_old) / sum_old * 100
+            row_totals_base = matrix_base.sum(axis=1)
+            row_totals_comp = matrix_comp.sum(axis=1)
+            with np.errstate(divide='ignore', invalid='ignore'):
+                diff_matrix['Total'] = ((row_totals_comp - row_totals_base) / row_totals_base.replace(0, np.nan)) * 100
+                diff_matrix['Total'] = diff_matrix['Total'].fillna(0)
+            
+            # Calculate column totals correctly: (sum_new - sum_old) / sum_old * 100
+            col_totals_base = matrix_base.sum(axis=0)
+            col_totals_comp = matrix_comp.sum(axis=0)
+            with np.errstate(divide='ignore', invalid='ignore'):
+                col_totals_pct = ((col_totals_comp - col_totals_base) / col_totals_base.replace(0, np.nan)) * 100
+                col_totals_pct = col_totals_pct.fillna(0)
+            
+            # Add the Total column to col_totals_pct for the grand total
+            grand_total_base = matrix_base.sum().sum()
+            grand_total_comp = matrix_comp.sum().sum()
+            grand_total_pct = ((grand_total_comp - grand_total_base) / grand_total_base) * 100 if grand_total_base > 0 else 0
+            col_totals_pct['Total'] = grand_total_pct
+            
+            diff_matrix.loc['Total'] = col_totals_pct
+        
+        # Display title
+        if comparison_type == "ABM vs ABM":
             st.markdown(f"**{scenario_compare}** minus **{scenario_base}** ({diff_mode})")
+        else:  # ABM vs HTS
+            st.markdown(f"**ABM {scenario_compare}** minus **HTS** ({diff_mode})")
+        
+        if diff_mode == "Percentage Point Difference":
+            st.caption("🟢 Positive values (ABM has higher %) | 🔴 Negative values (ABM has lower %) | Values show difference in percentage points")
+        else:
             st.caption("🟢 Positive values (increase) | 🔴 Negative values (decrease)")
-            
-            # Apply color styling
-            def color_difference(val):
-                """Apply color based on positive/negative values"""
-                try:
-                    if pd.isna(val) or val == 0:
-                        color = 'black'
-                    elif val > 0:
-                        color = 'green'
-                    else:
-                        color = 'red'
-                    return f'color: {color}'
-                except:
-                    return ''
-            
-            # Create styled dataframe
-            styled_diff = diff_matrix.style.applymap(color_difference)
-            
-            # Format the numbers
-            if diff_mode == "Absolute Difference":
-                styled_diff = styled_diff.format("{:.0f}")
-            else:  # Percentage Change
-                styled_diff = styled_diff.format("{:.1f}%")
-            
-            # Display the difference matrix
-            st.dataframe(
-                styled_diff,
-                use_container_width=True,
-                height=400
-            )
-            
-            # Summary statistics
-            total_base_workers = int(matrix_base.sum().sum())
-            total_comp_workers = int(matrix_comp.sum().sum())
-            total_diff = total_comp_workers - total_base_workers
-            pct_change = (total_diff / total_base_workers * 100) if total_base_workers > 0 else 0
-            
-            col1, col2, col3 = st.columns(3)
-            with col1:
+        
+        # Apply color styling
+        def color_difference(val):
+            """Apply color based on positive/negative values"""
+            try:
+                if pd.isna(val) or val == 0:
+                    color = 'black'
+                elif val > 0:
+                    color = 'green'
+                else:
+                    color = 'red'
+                return f'color: {color}'
+            except:
+                return ''
+        
+        # Create styled dataframe
+        styled_diff = diff_matrix.style.applymap(color_difference)
+        
+        # Format the numbers
+        if diff_mode == "Absolute Difference":
+            styled_diff = styled_diff.format("{:.0f}")
+        else:  # Percentage Change or Percentage Point Difference
+            styled_diff = styled_diff.format("{:.1f}%")
+        
+        # Display the difference matrix
+        st.dataframe(
+            styled_diff,
+            use_container_width=True,
+            height=400
+        )
+        
+        # Summary statistics
+        total_base_workers = int(matrix_base.sum().sum())
+        total_comp_workers = int(matrix_comp.sum().sum())
+        total_diff = total_comp_workers - total_base_workers
+        pct_change = (total_diff / total_base_workers * 100) if total_base_workers > 0 else 0
+        
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            if comparison_type == "ABM vs ABM":
                 st.metric(f"{scenario_base} Workers", f"{total_base_workers:,}")
-            with col2:
+            else:
+                st.metric("HTS Workers", f"{total_base_workers:,}")
+        with col2:
+            if comparison_type == "ABM vs ABM":
                 st.metric(f"{scenario_compare} Workers", f"{total_comp_workers:,}")
-            with col3:
-                st.metric("Difference", f"{total_diff:+,}", f"{pct_change:+.1f}%")
+            else:
+                st.metric(f"ABM {scenario_compare} Workers", f"{total_comp_workers:,}")
+        with col3:
+            st.metric("Difference", f"{total_diff:+,}", f"{pct_change:+.1f}%")
 
