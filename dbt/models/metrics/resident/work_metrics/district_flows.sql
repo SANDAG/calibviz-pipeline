@@ -4,7 +4,7 @@ with abm3_source as (
     persons.scenario,
     home_pmsa.pmsa_name as home_district,
     work_pmsa.pmsa_name as work_district,
-    count(distinct persons.person_id) as freq
+    count(*) as freq
     from {{ ref('stg_abm3_persons') }} as persons
     left join {{ ref('stg_abm3_households') }} as households
     on persons.household_id = households.household_id
