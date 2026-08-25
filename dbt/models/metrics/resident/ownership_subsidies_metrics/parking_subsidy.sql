@@ -1,11 +1,12 @@
 with abm3_source as (
     select
+        scenario,
         person_type,
         SUM(free_parking_weight) as validated
     from {{ ref('int_ownership_subsidy') }}
     where daily_parking_expenditure > 0 and (is_student or is_worker)
-    group by person_type
-    order by person_type
+    group by scenario, person_type
+    order by scenario, person_type
 ),
 
 hts_source as (
@@ -17,6 +18,7 @@ hts_source as (
 
 hts_abm3_joined as (
     select
+        a.scenario,
         a.person_type,
         a.validated as abm_proportion,
         h.proportion as hts_proportion
@@ -25,3 +27,4 @@ hts_abm3_joined as (
 )
 
 select * from hts_abm3_joined
+order by scenario, person_type

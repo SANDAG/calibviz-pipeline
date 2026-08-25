@@ -35,6 +35,7 @@ filter_gq as (
     from filter_columns as persons
     left join {{ ref('stg_abm3_households') }} as households
         on persons.household_id = households.household_id
+            and persons.scenario = households.scenario
     where {{ include_gq_where('unittype') }}  -- -> will be "unittype = 0" if include_gq is false
 )
 

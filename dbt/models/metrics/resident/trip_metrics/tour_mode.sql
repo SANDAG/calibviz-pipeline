@@ -1,5 +1,6 @@
 with abm3_temp as (
     select
+        t.scenario,
         case
             when h.auto_ownership = 0 then '0: No Vehicles'
             when h.auto_ownership > h.num_adults then '2: Vehicles >= Adults'
@@ -17,17 +18,18 @@ with abm3_temp as (
     left join {{ ref('purpose_mapping') }} as p
         on t.primary_purpose = p.purpose_abm3
     left join {{ ref('stg_abm3_households') }} as h
-        on t.household_id = h.household_id
+        on t.household_id = h.household_id and t.scenario = h.scenario
 ),
 
 abm3_source as (
     select
+        scenario,
         veh_ownership_category,
         tour_mode,
         purpose,
         count(*) as abm_tours
     from abm3_temp
-    group by veh_ownership_category, tour_mode, purpose
+    group by scenario, veh_ownership_category, tour_mode, purpose
 ),
 
 survey_source as (
@@ -45,6 +47,7 @@ survey_source as (
 
 survey_abm3_tour_mode_joined as (
     select
+        s.scenario,
         coalesce(s.veh_ownership_category, h.veh_ownership_category)
             as veh_ownership_category,
         coalesce(s.tour_mode, h.tour_mode) as tour_mode,

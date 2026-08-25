@@ -1,5 +1,6 @@
 with abm3_temp as (
     select 
+        trips.scenario,
         coalesce(m1.mode_hts, trips.trip_mode) as trip_mode,
         coalesce(m2.mode_hts, tours.tour_mode) as tour_mode,
         coalesce(purp.individual_category, tours.primary_purpose) as tour_purpose,
@@ -8,7 +9,7 @@ with abm3_temp as (
     left join {{ ref('mode_mapping') }} as m1
     on trips.trip_mode = m1.mode_abm3
     left join {{ ref('stg_abm3_tours') }} as tours
-    on trips.tour_id = tours.tour_id
+    on trips.tour_id = tours.tour_id and trips.scenario = tours.scenario
     left join {{ ref('mode_mapping') }} as m2
     on tours.tour_mode = m2.mode_abm3
     left join {{ ref('purpose_mapping') }} as purp
@@ -16,12 +17,13 @@ with abm3_temp as (
 ),
 abm3_source as (
     select 
+        scenario,
         trip_mode,
         tour_mode,
         tour_purpose,
         sum(weight_person_trip) as abm_trips
     from abm3_temp as t
-    group by trip_mode, tour_mode, tour_purpose
+    group by scenario, trip_mode, tour_mode, tour_purpose
 ),
 survey_source as (
     select
@@ -37,6 +39,7 @@ survey_source as (
 ),
 survey_abm3_trip_mode_joined as (
     select 
+        s.scenario,
         coalesce(s.trip_mode, h.trip_mode) as trip_mode,
         coalesce(s.tour_mode, h.tour_mode) as tour_mode,
         coalesce(s.tour_purpose, h.tour_purpose) as tour_purpose,

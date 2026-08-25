@@ -1,9 +1,10 @@
 with abm3_source as (
-    select 
+    select
+        scenario,
         case when transponder_ownership then 'Yes' else 'No' end as transponder_ownership,
-        count(*) * 1.0 / sum(count(*)) over () as proportion
+        count(*) * 1.0 / sum(count(*)) over (partition by scenario) as proportion
     from {{ ref('stg_abm3_households') }} 
-    group by 1
+    group by scenario, case when transponder_ownership then 'Yes' else 'No' end
 ),
 
 hts_source as (
@@ -14,7 +15,8 @@ hts_source as (
 ),
 
 hts_abm3_joined as (
-    select 
+    select
+        a.scenario,
         a.transponder_ownership, 
         a.proportion as abm_proportion, 
         h.proportion as hts_proportion
@@ -23,3 +25,4 @@ hts_abm3_joined as (
 )
 
 select * from hts_abm3_joined where transponder_ownership = 'Yes'
+order by scenario

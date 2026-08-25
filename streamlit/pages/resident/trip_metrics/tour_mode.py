@@ -7,6 +7,7 @@ import streamlit as st
 sys.path.append("..")
 
 from database import display_connection_status, get_db_connection
+from scenario_config import render_scenario_selector, format_scenario_sql_list
 
 st.set_page_config(page_title="Tour Mode Distribution", layout="wide")
 
@@ -14,10 +15,14 @@ st.title("Tour Mode Comparison")
 
 display_connection_status()
 
+# Get scenario selection
+scenarios = render_scenario_selector()
+
 # Query and display data
 conn = get_db_connection()
+scenarios_list = format_scenario_sql_list(scenarios)
 df = conn.execute(
-    "SELECT tour_mode, veh_ownership_category, purpose, abm_tours, survey_tours FROM calibration_metrics.tour_mode WHERE veh_ownership_category NOT IN ('all') and tour_mode IS NOT NULL and purpose NOT IN ('Total') ORDER BY tour_mode"
+    f"SELECT scenario, tour_mode, veh_ownership_category, purpose, abm_tours, survey_tours FROM calibration_metrics.tour_mode WHERE scenario IN ('{scenarios_list}') and veh_ownership_category NOT IN ('all') and tour_mode IS NOT NULL and purpose NOT IN ('Total') ORDER BY tour_mode"
 ).fetch_df()
 
 st.dataframe(df)
@@ -94,23 +99,44 @@ if selected_veh_ownership_cats:
 if selected_purposes:
     df_filtered = df_filtered[df_filtered["purpose"].isin(selected_purposes)]
 
-df_filtered = df_filtered.groupby("tour_mode", as_index=False).agg(
+# Aggregate by scenario and tour_mode
+df_filtered = df_filtered.groupby(["scenario", "tour_mode"], as_index=False).agg(
     {"abm_tours": "sum", "survey_tours": "sum"}
 )
 
-# Calculate shares
-total_abm = df_filtered["abm_tours"].sum()
-total_survey = df_filtered["survey_tours"].sum()
+# Calculate shares per scenario
+df_filtered["abm_percentage"] = 0
+df_filtered["survey_percentage"] = 0
 
-df_filtered["abm_percentage"] = (
-    df_filtered["abm_tours"] * 100 / total_abm if total_abm > 0 else 0
-)
-df_filtered["survey_percentage"] = (
-    df_filtered["survey_tours"] * 100 / total_survey if total_survey > 0 else 0
-)
+for scenario in scenarios:
+    scenario_mask = df_filtered["scenario"] == scenario
+    total_abm = df_filtered.loc[scenario_mask, "abm_tours"].sum()
+    total_survey = df_filtered.loc[scenario_mask, "survey_tours"].sum()
+    
+    if total_abm > 0:
+        df_filtered.loc[scenario_mask, "abm_percentage"] = (
+            df_filtered.loc[scenario_mask, "abm_tours"] * 100 / total_abm
+        )
+    if total_survey > 0:
+        df_filtered.loc[scenario_mask, "survey_percentage"] = (
+            df_filtered.loc[scenario_mask, "survey_tours"] * 100 / total_survey
+        )
 
-# Keep only tour_mode and shares
-df_filtered = df_filtered[["tour_mode", "survey_percentage", "abm_percentage"]]
+# Pivot for display
+df_pivot_abm = df_filtered.pivot_table(
+    index="tour_mode",
+    columns="scenario",
+    values="abm_percentage",
+    aggfunc="first"
+).reset_index()
+
+# Get survey data (same across scenarios)
+df_survey = df_filtered.groupby("tour_mode").agg({
+    "survey_percentage": "first"
+}).reset_index()
+
+# Merge
+df_display = df_pivot_abm.merge(df_survey, on="tour_mode", how="left")
 
 fig = go.Figure()
 
@@ -118,21 +144,23 @@ fig = go.Figure()
 fig.add_trace(
     go.Bar(
         name="Survey",
-        x=df_filtered["tour_mode"],
-        y=df_filtered["survey_percentage"],
+        x=df_display["tour_mode"],
+        y=df_display["survey_percentage"],
         hovertemplate="Tour Mode: %{x}<br>Survey: %{y:.1f}%<extra></extra>",
     )
 )
 
-# Add ABM bars
-fig.add_trace(
-    go.Bar(
-        name="ABM",
-        x=df_filtered["tour_mode"],
-        y=df_filtered["abm_percentage"],
-        hovertemplate="Tour Mode: %{x}<br>ABM: %{y:.1f}%<extra></extra>",
-    )
-)
+# Add ABM bars for each scenario
+for scenario in scenarios:
+    if scenario in df_display.columns:
+        fig.add_trace(
+            go.Bar(
+                name=f"ABM ({scenario})",
+                x=df_display["tour_mode"],
+                y=df_display[scenario],
+                hovertemplate=f"Tour Mode: %{{x}}<br>ABM ({scenario}): %{{y:.1f}}%<extra></extra>",
+            )
+        )
 
 fig.update_layout(
     barmode="group",
@@ -147,17 +175,22 @@ table_col, separator_col, chart_col = st.columns([1, 0.1, 2])
 
 with table_col:
     st.subheader("📊 Data Table")
+    
+    # Build column config dynamically
+    column_config = {
+        "survey_percentage": st.column_config.NumberColumn(
+            "Survey Percentage", format="%.1f%%"
+        )
+    }
+    for scenario in scenarios:
+        if scenario in df_display.columns:
+            column_config[scenario] = st.column_config.NumberColumn(
+                f"ABM {scenario} %", format="%.1f%%"
+            )
 
     st.dataframe(
-        df_filtered,
-        column_config={
-            "abm_percentage": st.column_config.NumberColumn(
-                "ABM Percentage", format="%.1f%%"
-            ),
-            "survey_percentage": st.column_config.NumberColumn(
-                "Survey Percentage", format="%.1f%%"
-            ),
-        },
+        df_display,
+        column_config=column_config,
         use_container_width=True,
         hide_index=True,
     )

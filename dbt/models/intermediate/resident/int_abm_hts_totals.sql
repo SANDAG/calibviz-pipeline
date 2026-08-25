@@ -1,6 +1,7 @@
 WITH tours AS (
     SELECT
         'ABM' AS source,
+        scenario,
         SUM(
             (
                 CAST(SUBSTRING(stop_frequency, 1, 1) AS INTEGER)
@@ -9,33 +10,41 @@ WITH tours AS (
         ) AS total_stops,
         SUM(number_of_participants) AS total_participants
     FROM {{ ref('stg_abm3_tours') }}
+    GROUP BY scenario
 ),
 
 trips AS (
     SELECT
         'ABM' AS source,
+        scenario,
         SUM(distance_drive * weight_trip) AS vmt,
         SUM(weight_person_trip) AS trips
     FROM {{ ref('stg_abm3_trips') }}
+    GROUP BY scenario
 ),
 
 households AS (
     SELECT
         'ABM' AS source,
+        scenario,
         COUNT(DISTINCT household_id) AS households
     FROM {{ ref('stg_abm3_households') }}
+    GROUP BY scenario
 ),
 
 persons AS (
     SELECT
         'ABM' AS source,
+        scenario,
         COUNT(DISTINCT person_id) AS population
     FROM {{ ref('stg_abm3_persons') }}
+    GROUP BY scenario
 ),
 
 abm AS (
     SELECT
         t.source,
+        t.scenario,
         t.total_stops,
         t.total_participants,
         tr.vmt,
@@ -43,12 +52,17 @@ abm AS (
         h.households,
         p.population
     FROM tours AS t
-    CROSS JOIN trips AS tr
-    CROSS JOIN households AS h
-    CROSS JOIN persons AS p
+    JOIN trips AS tr ON t.scenario = tr.scenario
+    JOIN households AS h ON t.scenario = h.scenario
+    JOIN persons AS p ON t.scenario = p.scenario
 ),
 
-hts AS (
+all_scenarios AS (
+    SELECT DISTINCT scenario
+    FROM abm
+),
+
+hts_base AS (
     SELECT
         'HTS' AS source,
         stops AS total_stops,
@@ -69,6 +83,20 @@ hts AS (
                 'Population'
             )
         )
+),
+
+hts AS (
+    SELECT
+        h.source,
+        s.scenario,
+        h.total_stops,
+        h.total_participants,
+        h.vmt,
+        h.trips,
+        h.households,
+        h.population
+    FROM hts_base h
+    CROSS JOIN all_scenarios s
 )
 
 SELECT * FROM abm

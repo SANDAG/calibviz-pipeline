@@ -23,6 +23,7 @@ filter_gq as (
     from filter_columns as tours
     left join {{ ref('stg_abm3_households') }} as households
     on tours.household_id = households.household_id
+        and tours.scenario = households.scenario
     where {{ include_gq_where('unittype') }}  -- -> will be "unittype = 0" if include_gq is false
 )
 select *

@@ -1,5 +1,6 @@
 with long_format as (
     select
+        scenario,
         source,
         metric,
         value
@@ -21,4 +22,4 @@ select * from long_format
         MAX(value)
         for source in ('ABM', 'HTS')
     )
-order by metric
+order by scenario, metric

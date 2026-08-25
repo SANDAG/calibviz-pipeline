@@ -5,6 +5,7 @@ import streamlit as st
 sys.path.append("..")
 
 from database import display_connection_status, get_db_connection
+from scenario_config import render_scenario_selector, format_scenario_sql_list
 
 st.set_page_config(page_title="Overview", layout="wide")
 
@@ -17,12 +18,18 @@ st.info(
 
 display_connection_status()
 
+# Get scenario selection
+scenarios = render_scenario_selector()
+
 # Query and display data
 conn = get_db_connection()
 
-df = conn.execute(
-    "SELECT metric, ABM as abm, HTS as hts FROM calibration_metrics.overview"
-).fetch_df()
+scenarios_list = format_scenario_sql_list(scenarios)
+df = conn.execute(f"""
+    SELECT scenario, metric, ABM as abm, HTS as hts 
+    FROM calibration_metrics.overview
+    WHERE scenario IN ('{scenarios_list}')
+""").fetch_df()
 
 df["% Difference"] = ((df["abm"] - df["hts"]) / df["hts"] * 100).round(1)
 

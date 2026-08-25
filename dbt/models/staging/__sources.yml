@@ -1,17 +1,17 @@
 sources:
   # Resident model sources
-  - name: "2022_V1542" # base scenario
+  - name: "2022_wl_calib_2d" # base scenario
     meta:
-      external_location: 'T:/STORAGE-63T/abm3_runs/2022_V1542/output/resident/{name}.csv'
+      external_location: 'T:/STORAGE-63T/abm3_runs/postRP_test/2022_wl_calib_2d/output/resident/{name}.csv'
     tables: &resident_tables  # Define anchor here
       - name: final_trips
       - name: final_households
       - name: final_persons
       - name: final_tours
       - name: final_land_use
-  - name: "2022_V1542_SP" # comparison scenario
+  - name: "2022_V1552_wl" # comparison scenario
     meta:
-      external_location: 'T:/STORAGE-63T/abm3_runs/2022_V1542_SP/output/resident/{name}.csv'
+      external_location: 'T:/STORAGE-63T/abm3_runs/postRP_test/2022_V1552_wl/output/resident/{name}.csv'
     tables: *resident_tables  # Reference anchor
   - name: general_survey
     meta:

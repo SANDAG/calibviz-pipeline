@@ -1,9 +1,10 @@
 with abm3_source as (
     select 
+        scenario,
         auto_ownership,
-        count(*) * 1.0 / sum(count(*)) over () as proportion
+        count(*) * 1.0 / sum(count(*)) over (partition by scenario) as proportion
     from {{ ref('stg_abm3_households') }} 
-    group by auto_ownership
+    group by scenario, auto_ownership
 ),
 
 hts_source as (
@@ -15,6 +16,7 @@ hts_source as (
 
 hts_abm3_joined as (
     select 
+        a.scenario,
         a.auto_ownership, 
         a.proportion as abm_proportion, 
         h.proportion as hts_proportion
@@ -23,3 +25,4 @@ hts_abm3_joined as (
 )
 
 select * from hts_abm3_joined
+order by scenario, auto_ownership
